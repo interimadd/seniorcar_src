@@ -1,0 +1,59 @@
+<launch>
+
+  <param name="use_sim_time" value="true"/>
+  <param name="tilt_laser_topic" value="scan_tilt"/>
+  <param name="offset_between_ground_and_base_link" value="0.125"/>
+
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_front" args="1.06 0.0 0.27 0.0 0.0 0.0 /base_link /laser_front 40" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.53 0.0 0.55 0.0 /base_link /laser_tilt 40" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_back" args="-0.16 0.0 0.27 3.14 0.0 0.0 /base_link /laser_back 40" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="1.0 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_imu" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /imu 40" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 0.6 0.0 0.0 0.0 /base_link /velodyne 40" />
+  <node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom"/>
+
+  <include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
+
+  <node pkg="urg_process" type="laser_point_to_height_map" name="laser_point_to_height_map" output="screen"/>
+  <node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
+
+  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/3rd_floor/3rd_filtered.bag --delay=1 --clock"/>
+
+  <node pkg="rviz" type="rviz" name="rviz"/>
+
+  <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+    <param name="destination_frame" value="/laser_front"/>
+    <param name="cloud_destination_topic" value="/merged_cloud"/>
+    <param name="scan_destination_topic" value="/scan_multi"/>
+    <param name="laserscan_topics" value="/scan_front /scan_back" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+  </node>
+
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <remap from="scan" to="scan_multi"/>
+    <param name="base_frame" value="base_link" /> <!--ロボットの基本フレーム-->
+    <param name="odom_frame" value="odom" /> <!--オドメトリフレーム-->
+    <param name="map_update_interval" value="1.0" /> <!--環境地図の更新間隔 (sec)-->
+    <param name="maxUrange" value="20.0" /> <!--レーザー最大到達距離 (meter)-->
+    <param name="sigma" value="0.05" /> <!--レーザー対応探索の標準偏差-->
+    <param name="kernelSize" value="1" /> <!--レーザー対応探索のウィンドウサイズ-->
+    <param name="astep" value="0.05" /> <!--初期探索ステップ (回転)-->
+    <param name="iterations" value="5" /> <!--スキャンマッチングの繰り返し回数-->
+    <param name="lsigma" value="0.075" /> <!--ビーム尤度計算の標準偏差-->
+    <param name="ogain" value="3.0" /> <!--尤度平滑化ゲイン-->
+    <param name="lskip" value="0" /> <!--スキャンマッチングを行う間隔-->
+    <param name="srr" value="0.01" /> <!--オドメトリエラー (移動→移動)-->
+    <param name="srt" value="0.02" /> <!--オドメトリエラー (移動→回転)-->
+    <param name="str" value="0.01" /> <!--オドメトリエラー (回転→移動)-->
+    <param name="stt" value="0.02" /> <!--オドメトリエラー (回転→回転)-->
+    <param name="linearUpdate" value="0.25" /> <!--処理開始に必要な最低移動距離-->
+    <param name="angularUpdate" value="0.15" /> <!--処理開始に必要な最低回転角度-->
+    <param name="temporalUpdate" value=" − 1.0" /> <!--最後にスキャンを行った時間がこの更新時間を過ぎた場合、スキャンを行う。この値が0以下の場合は使用しない。-->
+    <param name="resampleThreshold" value="0.5" /> <!--リサンプルを行う閾値-->
+    <param name="delta" value="0.03" /> <!--環境地図の解像度: 長さ/ピクセル-->
+    <param name="llsamplerange" value="0.01" /> <!--尤度計算の範囲 (移動)-->
+    <param name="llsamplestep" value="0.01" /> <!--尤度計算のステップ幅 (移動)-->
+    <param name="lasamplerange" value="0.005" /> <!--尤度計算の範囲 (回転)-->
+    <param name="lasamplestep" value="0.005" /> <!--尤度計算のステップ幅 (回転)-->
+  </node>
+
+</launch>

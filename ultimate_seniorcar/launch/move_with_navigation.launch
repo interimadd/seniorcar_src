@@ -1,0 +1,52 @@
+<launch>
+
+	<!-- USBポート番号の定義 -->
+	
+	<arg name="frontLRF_port"      value="/dev/ttyACM3"/>
+    <arg name="front_tiltLRF_port" value="/dev/ttyACM1"/>
+    <arg name="backLRF_port"       value="/dev/ttyACM2"/>
+    <arg name="imu_port"           value="/dev/ttyACM0"/>
+    <arg name="steer_motor_port"   value="/dev/ttyACM0"/>
+
+	<!-- 各種センサへの接続 -->
+    
+    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter">
+        <param name="canusb_port" value="$(arg canusb_port)"/>
+    </node>
+    
+    <include file="$(find ultimate_seniorcar)/launch_xml/hokuyo_lidar.xml"> 
+    	<arg name="frontLRF_port"       value="$(arg frontLRF_port)"/> 
+        <arg name="front_tiltLRF_port"  value="$(arg front_tiltLRF_port)"/> 
+        <arg name="backLRF_port"        value="$(arg backLRF_port)"/> 
+    </include>
+
+    <include file="$(find ultimate_seniorcar)/launch_xml/imu_and_pose_estimation.xml">
+        <arg name="imu_port" value="$(arg imu_port)"/>
+    </include>
+
+    <!-- 各種ノード立ち上げ -->
+    <node pkg="ultimate_seniorcar" type="seniorcar_odometry.py" name="seniorcar_odometry" />
+    <node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom">
+        <param name="odom_topic" value="seniorcar_odometry"/>
+    </node>
+
+    <include file="$(find ultimate_seniorcar)/launch_xml/navigation.xml" />
+
+    <!--
+    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel.xml">
+        <arg name="steer_motor_port" value="$(arg steer_motor_port)"/>
+    </include>
+    -->
+
+    <include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
+    
+    <!-- おまけ -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ultimate_seniorcar)/launch_xml/seniorcar_visualize.rviz"/>
+
+</launch>
+
+
+<!-- 指令値を送る場合は電源がオフの状態からスタートすること -->
+<!-- launchファイル立ち上げの前に以下のノードを立ち上げておく -->
+<!-- rosrun ultimate_seniorcar canusb_connecter.py -->
+<!-- その後電源をつけること -->

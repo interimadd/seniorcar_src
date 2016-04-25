@@ -1,0 +1,31 @@
+<launch>
+
+  <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <remap from="scan" to="scan_front"/>
+    <param name="base_frame" value="base_link" /> <!--ロボットの基本フレーム-->
+    <param name="odom_frame" value="odom" /> <!--オドメトリフレーム-->
+    <param name="map_update_interval" value="1.0" /> <!--環境地図の更新間隔 (sec)-->
+    <param name="maxUrange" value="20.0" /> <!--レーザー最大到達距離 (meter)-->
+    <param name="sigma" value="0.05" /> <!--レーザー対応探索の標準偏差-->
+    <param name="kernelSize" value="1" /> <!--レーザー対応探索のウィンドウサイズ-->
+    <param name="astep" value="0.05" /> <!--初期探索ステップ (回転)-->
+    <param name="iterations" value="5" /> <!--スキャンマッチングの繰り返し回数-->
+    <param name="lsigma" value="0.075" /> <!--ビーム尤度計算の標準偏差-->
+    <param name="ogain" value="3.0" /> <!--尤度平滑化ゲイン-->
+    <param name="lskip" value="0" /> <!--スキャンマッチングを行う間隔-->
+    <param name="srr" value="0.01" /> <!--オドメトリエラー (移動→移動)-->
+    <param name="srt" value="0.02" /> <!--オドメトリエラー (移動→回転)-->
+    <param name="str" value="0.01" /> <!--オドメトリエラー (回転→移動)-->
+    <param name="stt" value="0.02" /> <!--オドメトリエラー (回転→回転)-->
+    <param name="linearUpdate" value="0.25" /> <!--処理開始に必要な最低移動距離-->
+    <param name="angularUpdate" value="0.15" /> <!--処理開始に必要な最低回転角度-->
+    <param name="temporalUpdate" value=" − 1.0" /> <!--最後にスキャンを行った時間がこの更新時間を過ぎた場合、スキャンを行う。この値が0以下の場合は使用しない。-->
+    <param name="resampleThreshold" value="0.5" /> <!--リサンプルを行う閾値-->
+    <param name="delta" value="0.03" /> <!--環境地図の解像度: 長さ/ピクセル-->
+    <param name="llsamplerange" value="0.01" /> <!--尤度計算の範囲 (移動)-->
+    <param name="llsamplestep" value="0.01" /> <!--尤度計算のステップ幅 (移動)-->
+    <param name="lasamplerange" value="0.005" /> <!--尤度計算の範囲 (回転)-->
+    <param name="lasamplestep" value="0.005" /> <!--尤度計算のステップ幅 (回転)-->
+  </node>
+
+</launch>
