@@ -27,16 +27,16 @@ class CalculateVoltage:
 		difference = int(data.steer_angle) - int(self.seniorcar_state.steer_angle)
 		#rospy.loginfo(self.seniorcar_state.steer_angle)
 
-		"""
-		if difference > 5:
-			self.motor_devision.data = 12
-		elif difference < -5:
-			self.motor_devision.data = -12
+		
+		if difference > 3:
+			self.motor_devision.data = 20
+		elif difference < -3:
+			self.motor_devision.data = -20
 		else:
 			self.motor_devision.data = 0
-		"""
+		
 
-		self.motor_devision.data = difference
+		#self.motor_devision.data = difference
 
 
 	def updateSeniorcarStateData(self,data):

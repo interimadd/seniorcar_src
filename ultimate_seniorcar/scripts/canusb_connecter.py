@@ -4,6 +4,7 @@
 import rospy
 import time
 import serial
+import sys
 from numpy import *
 from multiprocessing import Process, Value, Array
 from ultimate_seniorcar.msg import SeniorcarState
@@ -24,7 +25,7 @@ class CANUSB_Connecter:
 	def connect_with_canusb(self):
 
 		# シリアル通信開始
-		port = rospy.get_param('canusb_port',"/dev/ttyUSB0")
+		port = rospy.get_param('canusb_port',"/dev/ttyUSB1")
 		try:
 			self.ser = serial.Serial(port,9600)
 			self.ser.setDTR(False)
@@ -33,6 +34,7 @@ class CANUSB_Connecter:
 			print "start connection with canusb"
 		except:
 			print "cannot start connection with canusb"
+			sys.exit()
 
 		# CANUSBのCANポートを開くコマンド
 		# 改行コマンド×複数回→通信速度設定→ポートオープン
@@ -150,10 +152,11 @@ class CANUSB_Connecter:
 
 		rospy.Subscriber("seniorcar_command", SeniorcarState, self.command_recive)
 
+		rate = rospy.Rate(50)
 		while not rospy.is_shutdown():
 			self.update_vehicle_data()
 			self.pub.publish(self.seniorcar_state)
-			time.sleep(0.1)
+			rate.sleep()
 
 
 	def command_recive(self,data):

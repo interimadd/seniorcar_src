@@ -4,6 +4,7 @@
 import rospy
 import time
 import serial
+import sys
 from std_msgs.msg import Int8
 
 send_d = 0;
@@ -22,10 +23,10 @@ def connect_with_arduino():
 		print "start connection with steer_motor"
 	except:
 		print "cannot start connection with steer_motor"
-		return
+		sys.exit()
 
 	time.sleep(2)
-	rate = rospy.Rate(2)
+	rate = rospy.Rate(10)
 
 	while  not rospy.is_shutdown():
 		send_devision_to_steer_motor(ser)
