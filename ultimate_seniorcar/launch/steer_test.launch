@@ -1,0 +1,22 @@
+<launch>
+
+	 <arg name="steer_motor_port"   value="/dev/ttyACM0" />
+	 <arg name="canusb_port" value="/dev/ttyUSB0" />
+
+	<!-- 各種センサへの接続 -->
+    <!--
+    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter">
+        <param name="canusb_port" value="$(arg canusb_port)"/>
+    </node>
+-->
+    
+	<node pkg="ultimate_seniorcar" type="steer_motor.py" name="steer_motor" output="screen">
+		<param name="steer_motor_port" value="$(arg steer_motor_port)" />
+	</node>
+
+
+	<node pkg="keyboard" type="keyboard" name="keyboard"/>
+	<node pkg="ultimate_seniorcar" type="keyboard_to_seniorcar_command.py" name="keyboard_to_seniorcar_command" output="screen"/>
+	<node pkg="ultimate_seniorcar" type="target_steer_angle_to_motor_devision.py" name="target_steer_angle_to_motor_devision" />
+
+</launch>

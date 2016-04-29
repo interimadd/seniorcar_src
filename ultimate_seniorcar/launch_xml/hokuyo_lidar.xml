@@ -57,7 +57,7 @@
     	<param name="cloud_destination_topic" value="/merged_cloud"/>
     	<param name="scan_destination_topic" value="/scan_multi"/>
     	<param name="laserscan_topics" value="/scan_front /scan_back" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
-  	</node>
+  </node>
 
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_back" args="-0.16 0.0 0.27 3.14 0.0 0.0 /base_link /laser_back 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 0.6 0.0 0.0 0.0 /base_link /velodyne 40"/>

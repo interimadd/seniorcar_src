@@ -1,9 +1,11 @@
 <launch>
 	<arg name="steer_motor_port"/>
 
-	<node pkg="ultimate_seniorcar" type="cmd_vel_to_seniorcar_command.py" name="comand" output="screen" />
-	<node pkg="ultimate_seniorcar" type="target_steer_angle_to_motor_devision.py" name="target_steer_angle_to_motor_devision" output="screen">
+	<node pkg="ultimate_seniorcar" type="steer_motor.py" name="steer_motor">
 		<param name="steer_motor_port" value="$(arg steer_motor_port)" />
 	</node>
+
+	<node pkg="ultimate_seniorcar" type="cmd_vel_to_seniorcar_command.py" name="comand" output="screen"/>
+	<node pkg="ultimate_seniorcar" type="target_steer_angle_to_motor_devision.py" name="target_steer_angle_to_motor_devision"/>
 
 </launch>

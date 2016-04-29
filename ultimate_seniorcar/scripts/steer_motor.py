@@ -11,12 +11,11 @@ send_d = 0;
 def callback(data):
 	global send_d
 	send_d = data.data
-	#rospy.loginfo(send_d)
 
 def connect_with_arduino():
 	port = rospy.get_param('steer_motor_port',"/dev/ttyACM0")
 	try:
-		ser = serial.Serial(port,57600)
+		ser = serial.Serial(port,9600)
 		ser.setDTR(False)
 		time.sleep(1)
 		ser.setDTR(True)
@@ -26,7 +25,7 @@ def connect_with_arduino():
 		return
 
 	time.sleep(2)
-	rate = rospy.Rate(4.0)
+	rate = rospy.Rate(2)
 
 	while  not rospy.is_shutdown():
 		send_devision_to_steer_motor(ser)
@@ -40,13 +39,17 @@ def send_devision_to_steer_motor(ser):
 	send_str = ""
 
 	if 0 <= send_d and send_d < 10:
-		send_str = "R0"+str(send_d)
+		send_str = "L0"+str(send_d)
 	elif 10 <= send_d and send_d < 20:
-		send_str = "R"+str(send_d)
+		send_str = "L"+str(send_d)
+	elif 20 <= send_d:
+		send_str = "L20"
 	elif -10 < send_d and send_d < 0:
-		send_str = "L0"+str(-send_d)
+		send_str = "R0"+str(-send_d)
 	elif -20 < send_d and send_d <= -10:
-		send_str = "L"+str(-send_d)
+		send_str = "R"+str(-send_d)
+	elif send_d <= -20:
+		send_str = "R20"
 
 	rospy.loginfo(send_str)
 	ser.write(send_str)

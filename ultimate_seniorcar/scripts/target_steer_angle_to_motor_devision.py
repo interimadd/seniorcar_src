@@ -17,12 +17,15 @@ class CalculateVoltage:
 		self.motor_devision.data = 0
 	
 	def subscribe_key_data(self):
+		
 		rospy.Subscriber("seniorcar_command", SeniorcarState, self.keyboarddownCallback)
 		rospy.Subscriber("seniorcar_state", SeniorcarState, self.updateSeniorcarStateData)
 
 
 	def keyboarddownCallback(self,data):
-		difference = data.steer_angle - seniorcar_state.steer_angle
+
+		difference = int(data.steer_angle) - int(self.seniorcar_state.steer_angle)
+		#rospy.loginfo(self.seniorcar_state.steer_angle)
 
 		"""
 		if difference > 5:
@@ -37,11 +40,11 @@ class CalculateVoltage:
 
 
 	def updateSeniorcarStateData(self,data):
-		seniorcar_state = data
+		self.seniorcar_state = data
 
 
 	def calculate_and_publish_voltage(self):
-		rate = rospy.Rate(10)
+		rate = rospy.Rate(50)
 		while not rospy.is_shutdown():
 			self.pub.publish(self.motor_devision)
 			rate.sleep()

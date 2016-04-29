@@ -31,20 +31,21 @@ class CalculateVoltage:
 
 	def keyboarddownCallback(self,key):
 		if key.code == RIGHT:
-			self.seniorcar_command.steer_angle += 5
-		elif key.code == LEFT:
 			self.seniorcar_command.steer_angle -= 5
+		elif key.code == LEFT:
+			self.seniorcar_command.steer_angle += 5
 		elif key.code == UP:
 			self.seniorcar_command.accel_opening = 80
-		else:
+		elif key.code == SPACE:
 			self.seniorcar_command.accel_opening = 0
 			self.seniorcar_command.steer_angle = 0
 
 	def keyboardupCallback(self,key):
-		self.seniorcar_command.accel_opening = 0
+		if key.code == UP:
+			self.seniorcar_command.accel_opening = 0
 
 	def calculate_and_publish_voltage(self):
-		rate = rospy.Rate(10)
+		rate = rospy.Rate(20)
 		while not rospy.is_shutdown():
 			self.pub.publish(self.seniorcar_command)
 			rate.sleep()

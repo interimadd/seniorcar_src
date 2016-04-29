@@ -2,17 +2,19 @@
 
 	<!-- USBポート番号の定義 -->
 	
-	<arg name="frontLRF_port"      value="/dev/ttyACM3"/>
-    <arg name="front_tiltLRF_port" value="/dev/ttyACM1"/>
-    <arg name="backLRF_port"       value="/dev/ttyACM2"/>
+	<arg name="frontLRF_port"      value="/dev/ttyACM4"/>
+    <arg name="front_tiltLRF_port" value="/dev/ttyACM2"/>
+    <arg name="backLRF_port"       value="/dev/ttyACM3"/>
     <arg name="imu_port"           value="/dev/ttyACM0"/>
-    <arg name="steer_motor_port"   value="/dev/ttyACM0"/>
+    <arg name="steer_motor_port"   value="/dev/ttyACM1"/>
+    <arg name="canusb_port"        value="/dev/ttyUSB0"/>
 
 	<!-- 各種センサへの接続 -->
-    
+    <!--
     <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter">
         <param name="canusb_port" value="$(arg canusb_port)"/>
     </node>
+    -->
     
     <include file="$(find ultimate_seniorcar)/launch_xml/hokuyo_lidar.xml"> 
     	<arg name="frontLRF_port"       value="$(arg frontLRF_port)"/> 
@@ -32,11 +34,10 @@
 
     <include file="$(find ultimate_seniorcar)/launch_xml/navigation.xml" />
 
-    <!--
+    
     <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel.xml">
         <arg name="steer_motor_port" value="$(arg steer_motor_port)"/>
     </include>
-    -->
 
     <include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
     
@@ -50,3 +51,6 @@
 <!-- launchファイル立ち上げの前に以下のノードを立ち上げておく -->
 <!-- rosrun ultimate_seniorcar canusb_connecter.py -->
 <!-- その後電源をつけること -->
+
+<!-- 一度行った道をなぞるためのノード -->
+<!-- rosrun urg_process play_waypoint.py -->
