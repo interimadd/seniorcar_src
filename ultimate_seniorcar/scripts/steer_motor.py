@@ -15,6 +15,7 @@ def callback(data):
 
 def connect_with_arduino():
 	port = rospy.get_param('steer_motor_port',"/dev/ttyACM0")
+	print port
 	try:
 		ser = serial.Serial(port,9600)
 		ser.setDTR(False)

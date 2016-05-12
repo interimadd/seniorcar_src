@@ -1,0 +1,21 @@
+<launch>
+
+	 <arg name="steer_motor_port"   value="/dev/ttyACM1" />
+	 <arg name="canusb_port"		value="/dev/ttyUSB0" />
+	 <arg name="imu_port"           value="/dev/ttyACM0"/>
+
+	<!-- 各種センサへの接続 -->
+    <param name="canusb_port" value="$(arg canusb_port)"/>
+    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter"/>
+    
+    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel.xml">
+        <arg name="steer_motor_port" value="$(arg steer_motor_port)"/>
+    </include>
+    
+	<include file="$(find ultimate_seniorcar)/launch_xml/imu_and_pose_estimation.xml">
+        <arg name="imu_port" value="$(arg imu_port)"/>
+    </include>
+
+    <node pkg="seniorcar_test" type="generate_cmd_vel.py" name="generate_cmd_vel" />
+	
+</launch>

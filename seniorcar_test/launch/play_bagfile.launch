@@ -1,0 +1,13 @@
+<launch>
+
+	<param name="use_sim_time" value="true"/>
+	<param name="tilt_laser_topic" value="scan_tilt"/>
+	<param name="offset_between_ground_and_base_link" value="0.125"/>
+
+	<include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
+
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/GoogleDrive/movie/exp/bagfiles/kashiwa_campus/EnvBld_to_IOG.bag --delay=1 --clock"/>
+	
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/seniorcar_visualize.rviz"/>
+
+</launch> 

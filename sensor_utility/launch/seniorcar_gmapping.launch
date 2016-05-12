@@ -17,7 +17,7 @@
   <node pkg="urg_process" type="laser_point_to_height_map" name="laser_point_to_height_map" output="screen"/>
   <node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
 
-  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/3rd_floor/3rd_filtered.bag --delay=1 --clock"/>
+  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/GoogleDrive/movie/exp/bagfiles/kashiwa_campus/EnvBld_to_IOG_filtered.bag --delay=1 --clock"/>
 
   <node pkg="rviz" type="rviz" name="rviz"/>
 
@@ -49,7 +49,7 @@
     <param name="angularUpdate" value="0.15" /> <!--処理開始に必要な最低回転角度-->
     <param name="temporalUpdate" value=" − 1.0" /> <!--最後にスキャンを行った時間がこの更新時間を過ぎた場合、スキャンを行う。この値が0以下の場合は使用しない。-->
     <param name="resampleThreshold" value="0.5" /> <!--リサンプルを行う閾値-->
-    <param name="delta" value="0.03" /> <!--環境地図の解像度: 長さ/ピクセル-->
+    <param name="delta" value="0.1" /> <!--環境地図の解像度: 長さ/ピクセル-->
     <param name="llsamplerange" value="0.01" /> <!--尤度計算の範囲 (移動)-->
     <param name="llsamplestep" value="0.01" /> <!--尤度計算のステップ幅 (移動)-->
     <param name="lasamplerange" value="0.005" /> <!--尤度計算の範囲 (回転)-->

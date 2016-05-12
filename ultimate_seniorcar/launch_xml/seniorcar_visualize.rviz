@@ -10,6 +10,7 @@ Panels:
         - /Grid1
         - /LaserScan2
         - /LaserScan3
+        - /LaserScan3/Autocompute Value Bounds1
         - /Odometry1
         - /TF1
         - /TF1/Frames1
@@ -40,7 +41,7 @@ Panels:
     Experimental: true
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: LaserScan
 Visualization Manager:
   Class: ""
   Displays:
@@ -123,14 +124,14 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: false
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
+        Max Value: 0.37131
+        Min Value: -0.5
+        Value: false
       Axis: Z
       Channel Name: intensity
       Class: rviz/LaserScan
       Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color Transformer: AxisColor
       Decay Time: 100
       Enabled: true
       Invert Rainbow: false
@@ -179,6 +180,8 @@ Visualization Manager:
         front_up2:
           Value: true
         front_up3:
+          Value: true
+        imu:
           Value: true
         laser_back:
           Value: true
@@ -235,6 +238,8 @@ Visualization Manager:
               {}
             velodyne:
               {}
+          imu:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -372,7 +377,7 @@ Visualization Manager:
       Class: rviz/PointCloud2
       Color: 255; 255; 255
       Color Transformer: Intensity
-      Decay Time: 1
+      Decay Time: 10
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
@@ -429,14 +434,14 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.764797
+      Pitch: 0.369797
       Position:
-        X: -7.04674
-        Y: -5.04148
-        Z: 11.8261
+        X: -11.2212
+        Y: -4.73086
+        Z: 12.736
       Target Frame: <Fixed Frame>
       Value: FPS (rviz)
-      Yaw: 0.242786
+      Yaw: 0.0427855
     Saved: ~
 Window Geometry:
   Displays:

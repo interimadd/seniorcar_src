@@ -10,9 +10,8 @@
 
 	<!-- 各種センサへの接続 -->
     
-    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter">
-        <param name="canusb_port" value="$(arg canusb_port)"/>
-    </node>
+    <param name="canusb_port" value="$(arg canusb_port)"/>
+    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter" output="screen" />
     
     <include file="$(find ultimate_seniorcar)/launch_xml/hokuyo_lidar.xml"> 
     	<arg name="frontLRF_port"       value="$(arg frontLRF_port)"/> 

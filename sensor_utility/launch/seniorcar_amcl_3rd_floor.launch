@@ -12,7 +12,7 @@
   <node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 0.6 0.0 0.0 0.0 /base_link /velodyne 40" />
   <node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom"/>
 
-  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/3rd_floor/3rd_filtered.bag --delay=30 --clock"/>
+  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/GoogleDrive/movie/exp/bagfiles/kashiwa_campus/EnvBld_to_IOG_filtered.bag --delay=30 --clock"/>
 
   #### start rviz ################################################
 
@@ -25,7 +25,7 @@
     <param name="laserscan_topics" value="/scan_front /scan_back" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
   </node>
 
-  <node pkg="map_server" type="map_server" name="map_serve" args="/media/ishikawa/DATAPART1/HDD/bagfiles/3rd_floor/map.yaml"/>
+  <node pkg="map_server" type="map_server" name="map_serve" args="/media/ishikawa/DATAPART1/GoogleDrive/movie/exp/bagfiles/kashiwa_campus/map.yaml"/>
 
   <!-- trueの場合は、ACMLはマップのトピックを受信し、falseであればstatic_mapのサービスコールを使用する。-->
   <arg name="use_map_topic" default="true" />
