@@ -3,6 +3,7 @@
 
 import rospy
 import time
+import numpy
 import serial
 import sys
 from numpy import *
@@ -111,7 +112,8 @@ class CANUSB_Connecter:
 		command += "8"
 		command += str(incliment)
 		command += "010000"
-		command += "00"	#max_vel
+		#command += "00"	#max_vel
+		command += '%x' % int( (self.seniorcar_command_array[1] - 2.0)*25.0 )	#max_vel
 		command += "00"
 		command += "1C"
 
@@ -162,8 +164,8 @@ class CANUSB_Connecter:
 
 	def command_recive(self,data):
 		
-		self.seniorcar_command_array[0] = data.accel_opening
-		self.seniorcar_command_array[1] = data.max_velocity
+		self.seniorcar_command_array[0] = numpy.clip(data.accel_opening, 0.0, 99)
+		self.seniorcar_command_array[1] = numpy.clip(data.max_velocity , 0.0, 6.0)
 		self.seniorcar_command_array[2] = data.steer_angle
 		self.seniorcar_command_array[3] = data.vehicle_velocity * 3.6
 		self.seniorcar_command_array[4] = data.direction_switch

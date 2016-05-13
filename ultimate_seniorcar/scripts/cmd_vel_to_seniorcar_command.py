@@ -15,6 +15,7 @@ class CalculateVoltage:
 	seniorcar_command = SeniorcarState()
 	seniorcar_command.accel_opening = 0
 	seniorcar_command.steer_angle = 0
+	seniorcar_command.max_vel = 2.0
 
 	def __init__(self):
 		rospy.init_node('cmd_vel_to_seniorcar_command')
@@ -25,13 +26,21 @@ class CalculateVoltage:
 
 	def cmd_velCallback(self,msg):
 
-		tmp_accel_opening = (msg.linear.x / seniorcar_max_vel)*100
-		if tmp_accel_opening < 0:
-			tmp_accel_opening = 0
-		elif tmp_accel_opening > 99:
-			tmp_accel_opening = 99
+		if msg.linear.x < seniorcar_max_vel:
 
-		self.seniorcar_command.accel_opening = tmp_accel_opening
+			tmp_accel_opening = (msg.linear.x / seniorcar_max_vel)*100
+			if tmp_accel_opening < 0:
+				tmp_accel_opening = 0
+			elif tmp_accel_opening > 99:
+				tmp_accel_opening = 99
+
+			self.seniorcar_command.accel_opening = tmp_accel_opening
+			self.seniorcar_command.max_vel = 2.0
+
+		elif msg.linear.x >= seniorcar_max_vel:
+
+			self.seniorcar_command.accel_opening = 99
+			self.seniorcar_command.max_vel = msg.linear.x * 3.6
 
 
 		if msg.linear.x > 0.001:
