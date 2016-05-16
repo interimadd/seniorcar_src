@@ -5,9 +5,9 @@ import rospy
 from geometry_msgs.msg import Twist
 
 
-STRAIGHT_TIME    = 5.0
-TURNIG_TIME      = 5.0
-TARGET_ANGLE_VEL = 0.1
+STRAIGHT_TIME    = 10.0
+TURNIG_TIME      = 10.0
+TARGET_ANGLE_VEL = 0.5
 
 PROCESSING_RATE = 20.0
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
 	while passed_time < TURNIG_TIME:
 		cmd_vel.linear.x = 1.0
-		cmd_vel.angular.z = 0.1
+		cmd_vel.angular.z = TARGET_ANGLE_VEL
 		pub.publish(cmd_vel)
 		rate.sleep()
 		passed_time += PERIOD

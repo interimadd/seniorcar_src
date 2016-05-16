@@ -26,7 +26,7 @@ class CANUSB_Connecter:
 	def connect_with_canusb(self):
 
 		# シリアル通信開始
-		port = rospy.get_param('canusb_port',"/dev/ttyUSB0")
+		port = rospy.get_param('canusb_port',"/dev/ttyUSB1")
 		print port
 		try:
 			self.ser = serial.Serial(port,9600)
@@ -59,8 +59,11 @@ class CANUSB_Connecter:
 		#A0の6byteと7byteは同じにする
 		#t0A0 2 22 33は機器構成認識信号（22 33 の部分は00 00 意外であればなんでもよい）
 		#t0A1 8 00 00 accel 00 00 00 00 00 はアクセル開度の上書き
-		#t0A5 8 incliment 01 00 00 max_vel 00 00 1C other_commnad はアクセル開度以外の上書き.1Cは各信号を操作できるようにするしないのフラグ
+		#t0A5 8 incliment 01 00 00 direction_switch 00 00 1C other_commnad はアクセル開度以外の上書き.1Cは各信号を操作できるようにするしないのフラグ
 		#other_commandの中身は2byteの長さで 0 0 0 hone r_winker l_winker 0 light
+
+		#スズキからもらった資料の一部が誤り
+		#外部最高速度はID:0A1の方
 		
 		incliment = 11
 		wait_time = 0
@@ -91,14 +94,11 @@ class CANUSB_Connecter:
 	def accel_command_message(self):
 
 		command = "t0A180000"
-
-		if(self.seniorcar_command_array[0] < 10):
-			command += "0"
-			command += '%x' %  int(self.seniorcar_command_array[0])
-		else:
-			command += '%x' %  int(self.seniorcar_command_array[0])
-
-		command += "0000000000"
+		command += '%02x' %  int(self.seniorcar_command_array[0])
+		command += "00"
+		command += "00"
+		#command += '%02x' % int( (self.seniorcar_command_array[1] - 2.0)*25.0 )	#max_vel
+		command += "000000"
 		command += "\r"
 
 		return command
@@ -112,10 +112,8 @@ class CANUSB_Connecter:
 		command += "8"
 		command += str(incliment)
 		command += "010000"
-		#command += "00"	#max_vel
-		command += '%x' % int( (self.seniorcar_command_array[1] - 2.0)*25.0 )	#max_vel
-		command += "00"
-		command += "1C"
+		command += '%02x' % int( self.seniorcar_command_array[4] ) # direction_switch
+		command += "001C"
 
 		# 7byte目に格納する文字列の2進数表記
 		hone   = int(self.seniorcar_command_array[8])
@@ -143,7 +141,7 @@ class CANUSB_Connecter:
 
 		self.can_override_flag = Value('i',0)
 		self.seniorcar_state_array   = Array('d',(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
-		self.seniorcar_command_array = Array('d',(0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
+		self.seniorcar_command_array = Array('d',(0.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0))
 		self.read_process  = Process( target = self.read_candata, args=(''))
 		self.write_process = Process( target = self.write_candata,args=(''))
 
@@ -164,8 +162,8 @@ class CANUSB_Connecter:
 
 	def command_recive(self,data):
 		
-		self.seniorcar_command_array[0] = numpy.clip(data.accel_opening, 0.0, 99)
-		self.seniorcar_command_array[1] = numpy.clip(data.max_velocity , 0.0, 6.0)
+		self.seniorcar_command_array[0] = numpy.clip(data.accel_opening, 0.0, 127)
+		self.seniorcar_command_array[1] = numpy.clip(data.max_velocity , 2.0, 6.0)
 		self.seniorcar_command_array[2] = data.steer_angle
 		self.seniorcar_command_array[3] = data.vehicle_velocity * 3.6
 		self.seniorcar_command_array[4] = data.direction_switch

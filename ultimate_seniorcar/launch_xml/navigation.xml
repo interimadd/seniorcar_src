@@ -1,7 +1,7 @@
 <launch>
 
  <!-- Run the map server --> 
- <node pkg="map_server" type="map_server" name="map_serve" args="/media/ishikawa/DATAPART1/GoogleDrive/movie/exp/bagfiles/kashiwa_campus/map.yaml"/>
+ <node pkg="map_server" type="map_server" name="map_serve" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/map.yaml"/>
 
  <!--- Run AMCL -->   
  <include file="$(find ultimate_seniorcar)/launch_xml/amcl.xml" /> 
