@@ -5,7 +5,7 @@ import rospy
 import math
 from geometry_msgs.msg import PoseWithCovarianceStamped
 
-RECORD_THRESHOLD = 2.0  # 何mおきに記録するか
+RECORD_THRESHOLD = 0.05  # 何mおきに記録するか
 
 recorded_waypoints = [] 
 
@@ -23,7 +23,7 @@ def callback(data):
 
 def output_to_txt():
 
-    f=open('waypoint.txt','w')
+    f=open('waypoint_a.txt','w')
 
     for i in range( len(recorded_waypoints) ):
         f.write( str(recorded_waypoints[i].position.x) )

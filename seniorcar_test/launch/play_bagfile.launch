@@ -6,8 +6,10 @@
 
 	<include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/auto_drive_from_Env_to_IOG.bag --delay=1 --clock"/>
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/GoogleDrive/研究関連/修士/exp/bagfiles/avoid_pedestrian/avoid_pedestrian.bag --delay=1 --clock"/>
 	
-	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/seniorcar_visualize.rviz"/>
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/map_and_seniorcar_visualize.rviz"/>
+
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
 
 </launch> 

@@ -25,18 +25,23 @@ class CalculateVoltage:
 	def keyboarddownCallback(self,data):
 
 		difference = int(data.steer_angle) - int(self.seniorcar_state.steer_angle)
-		#rospy.loginfo(self.seniorcar_state.steer_angle)
 
-		
-		if difference > 3:
+		"""
+		now = rospy.get_rostime()
+		#print now, self.seniorcar_state.steer_angle, data.steer_angle
+		print "%d.%d,%f,%f" % (now.secs,now.nsecs,self.seniorcar_state.steer_angle, data.steer_angle)
+		"""
+
+		"""
+		if difference > 1:
 			self.motor_devision.data = 20
-		elif difference < -3:
+		elif difference < -1:
 			self.motor_devision.data = -20
 		else:
 			self.motor_devision.data = 0
-		
+		"""
 
-		#self.motor_devision.data = difference
+		self.motor_devision.data = difference
 
 
 	def updateSeniorcarStateData(self,data):

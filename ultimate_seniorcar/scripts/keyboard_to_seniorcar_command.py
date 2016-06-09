@@ -14,6 +14,8 @@ SPACE = 32
 
 OUT_VOL = [1,2,3,4]
 
+ANGLE_INCLIMENT = 5.0
+
 class CalculateVoltage:
 
 	motor_devision = Int8()
@@ -31,11 +33,17 @@ class CalculateVoltage:
 
 	def keyboarddownCallback(self,key):
 		if key.code == RIGHT:
-			self.seniorcar_command.steer_angle -= 5
+			self.seniorcar_command.steer_angle -= ANGLE_INCLIMENT
 		elif key.code == LEFT:
-			self.seniorcar_command.steer_angle += 5
+			self.seniorcar_command.steer_angle += ANGLE_INCLIMENT
 		elif key.code == UP:
-			self.seniorcar_command.accel_opening = 80
+			self.seniorcar_command.accel_opening = 127
+			self.seniorcar_command.max_velocity = 2.0
+		elif key.code == DOWN:
+			if self.seniorcar_command.direction_switch == 0:
+				self.seniorcar_command.direction_switch = 1
+			else:
+				self.seniorcar_command.direction_switch = 0
 		elif key.code == SPACE:
 			self.seniorcar_command.accel_opening = 0
 			self.seniorcar_command.steer_angle = 0

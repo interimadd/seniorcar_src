@@ -23,7 +23,7 @@
     <!-- フィルタの更新に必要な並進運動 (メートル単位) -->
     <param name="update_min_d" value="0.15" />
     <!-- フィルタの更新に必要な回転運動 (ラジアン単位) -->
-    <param name="update_min_a" value="0.15" />
+    <param name="update_min_a" value="0.10" />
     <!--再サンプリング間隔 -->
     <param name="resample_interval" value="1" />
     <!-- 変換許容時間 (秒単位) -->

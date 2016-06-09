@@ -17,6 +17,9 @@ class CalculateVoltage:
 	seniorcar_command.steer_angle = 0
 	seniorcar_command.max_velocity = 2.0
 
+	const_A = 0.97
+	new_steer_angle = 0.0
+
 	def __init__(self):
 		rospy.init_node('cmd_vel_to_seniorcar_command')
 		self.pub = rospy.Publisher('seniorcar_command', SeniorcarState, queue_size=10)
@@ -25,6 +28,8 @@ class CalculateVoltage:
 		rospy.Subscriber("cmd_vel", Twist, self.cmd_velCallback)
 
 	def cmd_velCallback(self,msg):
+
+		self.seniorcar_command.vehicle_velocity = msg.linear.x
 
 		if msg.linear.x < seniorcar_max_vel:
 
@@ -45,17 +50,14 @@ class CalculateVoltage:
 
 		if msg.linear.x > 0.001:
 			# 目標角速度から操舵角を計算。35度の範囲に収める
-			self.seniorcar_command.steer_angle = numpy.clip(math.atan(msg.angular.z * WHEEL_BASE / msg.linear.x) * 180.0 / 3.1415 , -35.0 ,35.0)
-			#print self.seniorcar_command
-			#self.seniorcar_command.steer_angle = 0
-
-
-		#print tmp_accel_opening,msg.linear.x,msg.angular.z
+			self.new_steer_angle = numpy.clip(math.atan(msg.angular.z * WHEEL_BASE / msg.linear.x) * 180.0 / 3.1415 , -35.0 ,35.0)
 
 
 	def calculate_and_publish_voltage(self):
-		rate = rospy.Rate(20)
+		rate = rospy.Rate(50)
 		while not rospy.is_shutdown():
+			# cmd_velの値が離散的すぎるので適当にローパスフィルタを入れた
+			self.seniorcar_command.steer_angle = self.const_A * self.seniorcar_command.steer_angle + ( 1.0 - self.const_A ) * self.new_steer_angle
 			self.pub.publish(self.seniorcar_command)
 			rate.sleep()
 

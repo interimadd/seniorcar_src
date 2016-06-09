@@ -24,7 +24,7 @@ class playRecordedWaypoint:
         self.pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
         self.get_waypoints_from_txt()
         self.client = actionlib.SimpleActionClient('move_base',MoveBaseAction)
-        while self.client.wait_for_server(rospy.Duration.from_sec(5.0)) == False:
+        while self.client.wait_for_server(rospy.Duration.from_sec(5.0)) == False and not rospy.is_shutdown():
             print "wait for server"
         self.goal = MoveBaseGoal()
         self.goal.target_pose.header.frame_id = "map"
@@ -64,6 +64,7 @@ class playRecordedWaypoint:
     def get_waypoints_from_txt(self):
 
         f=open('waypoint.txt','r')
+        num = 0
 
         for i in f.readlines():
         
@@ -82,13 +83,17 @@ class playRecordedWaypoint:
             pose_info.orientation.w = float(i[6])
 
             self.recorded_waypoints.append(pose_info)
+            num += 1
+
+            print pose_info
 
         f.close()
-        print "success to load waypoints"
+        print "success to load %d waypoints" % num 
 
     def listener(self):
         odom_topic = rospy.get_param('odom_topic',"/amcl_pose")
         rospy.Subscriber(odom_topic,PoseWithCovarianceStamped, self.callback)
+        #self.sendGoalToServer()
         print "start spin"
         rospy.spin()
     

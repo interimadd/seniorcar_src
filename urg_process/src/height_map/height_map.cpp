@@ -224,7 +224,7 @@ void  Height_Map::RotateEnableAreaToPointCloud(sensor_msgs::PointCloud *out){
 			if(rotate_enable_map[i][j]==DRIVABLE){
 			//if(rotate_enable_map[i][j]==DRIVABLE || rotate_enable_map[i][j] == ENABLE){
 				tmp_p = TranslateIndexToRealCordinate(i,j);
-				tmp_p.z = 0.0f;
+				tmp_p.z = 0.1f;
 				out->points.push_back(tmp_p);
 				count++;
 			}

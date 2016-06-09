@@ -12,6 +12,7 @@
 
 //Global variables
 float P_gain =0.5;
+float MIN_VOL = 5.0;
 float duty = 0.5;
 float input_voltage = 0;
 char header[1];
@@ -32,13 +33,15 @@ void setup() {
   Serial.begin(9600);
   CAN.begin(CAN_500KBPS); 
   pinMode(pwm,OUTPUT);
-  pinMode(dir,OUTPUT); 
+  pinMode(dir,OUTPUT);
+  digitalWrite(pwm,LOW);
 }
 
 void loop() {
 
   if(flag[0] <= 0){
     //CANで現在のフラグを取得
+    digitalWrite(pwm,LOW);
      if(CAN.checkReceive() == CAN_MSGAVAIL)                   // データが届いたかチェック
     {
       INT32U id = CAN.getCanId();
@@ -73,7 +76,7 @@ void loop() {
     if(headerIndex < 0){
       headerIndex = 0;
     }
-    delay(20);
+    //delay(20);
 
     header[0]     = readAll[headerIndex];
     inputValue[0] = readAll[headerIndex + 1];
@@ -87,19 +90,19 @@ void loop() {
       if(R_Value > Set_point){  
         digitalWrite(pwm,HIGH);
         input_voltage = R_Value * P_gain;
-        input_voltage = constrain(input_voltage, 8, 24);
+        input_voltage = constrain(input_voltage, MIN_VOL, 24);
         duty = 0.5 - input_voltage / 48;
         output = duty * 255;
       }
 
-      else if(R_Value < Set_point && R_Value > min_error ){
+      else if(R_Value <= Set_point && R_Value > min_error ){
         digitalWrite(pwm,HIGH);
-        input_voltage = 8;
+        input_voltage = MIN_VOL;
         duty = 0.5 - input_voltage / 48;
         output = duty * 255;
       }
     
-      else if(R_Value < min_error){
+      else if(R_Value <= min_error){
         digitalWrite(pwm,LOW);
       }
     }
@@ -112,25 +115,27 @@ void loop() {
       if(L_Value > Set_point){  
         digitalWrite(pwm,HIGH);
         input_voltage = L_Value * P_gain;
-        input_voltage = constrain(input_voltage, 8, 24);
+        input_voltage = constrain(input_voltage, MIN_VOL, 24);
         duty = 0.5 + input_voltage / 48;
         output = duty * 255;
       }
 
-      else if(L_Value < Set_point && L_Value > min_error ){
+      else if(L_Value <= Set_point && L_Value > min_error ){
         digitalWrite(pwm,HIGH);
-        input_voltage = 8;
+        input_voltage = MIN_VOL;
         duty = 0.5 + input_voltage / 48;
         output = duty * 255;
       }
      
-      else if(L_Value < min_error){
+      else if(L_Value <= min_error){
         digitalWrite(pwm,LOW);
       }
     }
+
   }
   
   }
   analogWrite(dir,output); 
+  delay(20);
 }
 

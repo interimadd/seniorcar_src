@@ -2,7 +2,7 @@
 
 	 <arg name="steer_motor_port"   value="/dev/ttyACM0" />
 	 <arg name="canusb_port"		value="/dev/ttyUSB0" />
-	 <arg name="imu_port"           value="/dev/ttyACM1"/>
+	 <arg name="imu_port"           value="/dev/ttyACM2"/>
 
     <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel.xml">
         <arg name="steer_motor_port" value="$(arg steer_motor_port)"/>
@@ -13,5 +13,7 @@
     </include>
 
     <node pkg="seniorcar_test" type="generate_cmd_vel.py" name="generate_cmd_vel" />
+    <node pkg="sensor_utility" type="target_and_state_output_console.py" name="console_out" output="screen"/>
+
 	
 </launch>

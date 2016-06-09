@@ -1,0 +1,17 @@
+<launch>
+
+	<param name="tilt_laser_topic" value="scan_tilt"/>
+	<param name="offset_between_ground_and_base_link" value="0.125"/>
+
+	
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="1.0 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
+
+	<node pkg="urg_process" type="laser_point_to_height_map" name="laser_point_to_height_map" output="screen"/>
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
+
+	<node pkg="point_cloud_converter" name="point_cloud_converter" type="point_cloud_converter_node" >
+		<remap from="points_in" to="height_map"/>
+		<remap from="points2_out" to="points2"/>
+	</node>
+
+</launch> 

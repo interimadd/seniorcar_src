@@ -5,9 +5,11 @@
 	<arg name="frontLRF_port"      value="/dev/ttyACM4"/>
     <arg name="front_tiltLRF_port" value="/dev/ttyACM2"/>
     <arg name="backLRF_port"       value="/dev/ttyACM3"/>
-    <arg name="imu_port"           value="/dev/ttyACM0"/>
-    <arg name="steer_motor_port"   value="/dev/ttyACM1"/>
+    <arg name="imu_port"           value="/dev/ttyACM1"/>
+    <arg name="steer_motor_port"   value="/dev/ttyACM0"/>
     <arg name="canusb_port"        value="/dev/ttyUSB0"/>
+
+    <arg name="map_path"           value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/map.yaml"/>
 
 	<!-- 各種センサへの接続 -->
     <!--
@@ -32,7 +34,9 @@
         <param name="odom_topic" value="seniorcar_odometry"/>
     </node>
 
-    <include file="$(find ultimate_seniorcar)/launch_xml/navigation.xml" />
+    <include file="$(find ultimate_seniorcar)/launch_xml/navigation.xml" >
+        <arg name="map_path" value="$(arg map_path)"/>
+    </include>
 
     
     <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel.xml">
@@ -42,7 +46,7 @@
     <include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
     
     <!-- おまけ -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ultimate_seniorcar)/launch_xml/seniorcar_visualize.rviz"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ultimate_seniorcar)/launch_xml/map_and_seniorcar_visualize.rviz"/>
 
 </launch>
 

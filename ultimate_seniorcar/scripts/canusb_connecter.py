@@ -26,7 +26,7 @@ class CANUSB_Connecter:
 	def connect_with_canusb(self):
 
 		# •∑•Í•¢•ÎÕ®–≈È_ º
-		port = rospy.get_param('canusb_port',"/dev/ttyUSB1")
+		port = rospy.get_param('canusb_port',"/dev/ttyUSB0")
 		print port
 		try:
 			self.ser = serial.Serial(port,9600)
@@ -96,8 +96,8 @@ class CANUSB_Connecter:
 		command = "t0A180000"
 		command += '%02x' %  int(self.seniorcar_command_array[0])
 		command += "00"
-		command += "00"
-		#command += '%02x' % int( (self.seniorcar_command_array[1] - 2.0)*25.0 )	#max_vel
+		#command += "00"
+		command += '%02x' % int( (self.seniorcar_command_array[1] - 2.0)*25.0 )	#max_vel
 		command += "000000"
 		command += "\r"
 

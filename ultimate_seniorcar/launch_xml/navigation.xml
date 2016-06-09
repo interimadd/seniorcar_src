@@ -1,12 +1,19 @@
 <launch>
 
+ <arg name="map_path" />
+
  <!-- Run the map server --> 
- <node pkg="map_server" type="map_server" name="map_serve" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/map.yaml"/>
+ <node pkg="map_server" type="map_server" name="map_serve" args="$(arg map_path)"/>
 
  <!--- Run AMCL -->   
  <include file="$(find ultimate_seniorcar)/launch_xml/amcl.xml" /> 
+
+ <param name="controller_frequency" value="15" />
+ <param name="oscillation_distance" value="1.5" /> 
  
  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+   <param name="controller_frequency" value="15" />
+   <param name="oscillation_distance" value="1.5" /> 
    <rosparam file="$(find ultimate_seniorcar)/launch_xml/navigation_yaml/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
    <rosparam file="$(find ultimate_seniorcar)/launch_xml/navigation_yaml/costmap_common_params.yaml" command="load" ns="local_costmap" /> 
    <rosparam file="$(find ultimate_seniorcar)/launch_xml/navigation_yaml/local_costmap_params.yaml" command="load" />
