@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "point_cloud_converter")
+set(point_cloud_converter_MAINTAINER "Sammy Pfeiffer <sam.pfeiffer@pal-robotics.com>")
+set(point_cloud_converter_DEPRECATED "")
+set(point_cloud_converter_VERSION "0.0.0")
+set(point_cloud_converter_BUILD_DEPENDS "roscpp" "sensor_msgs")
+set(point_cloud_converter_RUN_DEPENDS "roscpp" "sensor_msgs")
+set(point_cloud_converter_BUILDTOOL_DEPENDS "catkin")

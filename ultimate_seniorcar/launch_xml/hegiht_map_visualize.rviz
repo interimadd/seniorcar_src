@@ -4,9 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /LaserScan3
+        - /LaserScan3/Autocompute Value Bounds1
         - /TF1/Frames1
         - /TF1/Tree1
         - /PointCloud2
+        - /PointCloud2/Autocompute Value Bounds1
         - /PointCloud3
         - /PointCloud21
         - /LaserScan4
@@ -113,15 +116,15 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: false
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
+        Max Value: -0.0122432
+        Min Value: -0.262864
+        Value: false
       Axis: Z
       Channel Name: intensity
       Class: rviz/LaserScan
       Color: 255; 255; 255
-      Color Transformer: Intensity
-      Decay Time: 5
+      Color Transformer: AxisColor
+      Decay Time: 200
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
@@ -346,14 +349,14 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
-        Value: true
+        Max Value: 0.3
+        Min Value: -0.3
+        Value: false
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud
       Color: 170; 85; 0
-      Color Transformer: FlatColor
+      Color Transformer: AxisColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -490,14 +493,14 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.950317
+      Pitch: -0.175201
       Position:
-        X: 2.55051
-        Y: 7.44949
-        Z: 14.899
+        X: 17.2815
+        Y: 4.20272
+        Z: 0.150951
       Target Frame: <Fixed Frame>
       Value: FPS (rviz)
-      Yaw: 5.52779
+      Yaw: 4.46283
     Saved: ~
 Window Geometry:
   Displays:

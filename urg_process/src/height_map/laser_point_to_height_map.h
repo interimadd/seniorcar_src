@@ -2,6 +2,7 @@
 #include "geometry_msgs/Point.h"
 #include "sensor_msgs/PointCloud.h"
 #include "height_map.h"
+#include "risk_calculater.h"
 #include <tf/transform_listener.h>
 #include <math.h>
 #include <algorithm>

@@ -14,10 +14,7 @@
 
   <include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
 
-  <node pkg="urg_process" type="laser_point_to_height_map" name="laser_point_to_height_map" output="screen"/>
-  <node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
-
-  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/EnvBld_to_IOG_filtered.bag --delay=1 --clock"/>
+  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/oneloop_filtered.bag --delay=1 --clock"/>
 
   <node pkg="rviz" type="rviz" name="rviz"/>
 

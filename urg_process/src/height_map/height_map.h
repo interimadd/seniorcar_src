@@ -76,6 +76,20 @@ class Height_Map{
 		*/
 		void DetectRotateEnableAreaFromPoint(float pos_x,float pos_y);
 
+		/*
+			車輪接地高さの高さマップをPointCloudの方で出力する
+		*/
+		void TireHeightMapToPointCloud(sensor_msgs::PointCloud *out);
+
+		/*
+			あるグリッド上のx_index,y_indexでのタイヤの接地高さを計算する	
+		*/
+		float returnTireHeightInGrid(int x_index,int y_index);
+
+		/*
+			実世界座標を配列の番号に変換する
+		*/
+		void TranslateRealCordinateToIndex(int *return_index,float pose[2]);
 
 	private:
 
@@ -97,6 +111,8 @@ class Height_Map{
 			enable_rolling_threshold:車輪のボクセルとの接触角度が60°以上で転動できないため、60°がグリッドになったタイヤのどこの座標に相等するかを計算しておく
 		*/
 		RotateEnable isEnableRolling(int x_index,int y_index);
+
+
 		vector<float> tire_height;
 		int tire_radius_in_grid;
 		int half_tire_width_in_grid;

@@ -21,19 +21,27 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
 	sensor_msgs::PointCloud send_point_cloud,result_point_cloud;
 	send_point_cloud.header = msg->header;
   result_point_cloud.header = msg->header;
-	height_map.HeightMapToPointCloud(&send_point_cloud);
-  heightmap_pub.publish(send_point_cloud);
+  //height_map.HeightMapToPointCloud(&send_point_cloud);
+  //heightmap_pub.publish(send_point_cloud);
+
+  if(++i%5==0){
+    height_map.TireHeightMapToPointCloud(&send_point_cloud);
+    heightmap_pub.publish(send_point_cloud);
+  }
   
+  /*
   if(++i%3==0){
     height_map.UpdateRotateEnableMap();
     height_map.DetectRotateEnableAreaFromPoint(transform_vehicle_front.getOrigin().x(), transform_vehicle_front.getOrigin().y());
     height_map.RotateEnableAreaToPointCloud(&result_point_cloud);
     result_pub.publish(result_point_cloud);
   }
+  */
   if( pow(height_map.center_x-transform.getOrigin().x(),2) + pow(height_map.center_y-transform.getOrigin().y(),2) > 1.0 ){
     height_map.MoveHeightMapCenter(transform.getOrigin().x(), transform.getOrigin().y());
     //printf("%f,%f,%f\n",transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
   }
+
 
 }
 

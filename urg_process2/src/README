@@ -1,0 +1,13 @@
+・height_map.h
+	HeightMap(二次元の格子上に高さ情報だけを記録したもの)のクラスを定義したライブラリ
+	メンバ関数などはファイルを参照
+
+・laser_point_to_height_map.cpp
+	HeightMapを利用して走行可能領域を判定して、PointCloudの形式で結果を配信する	
+
+・laser_scan_to_point_cloud.cpp
+	LaserScan形式のトピックをPointCloudの形式に変換する
+	三次元上の座標が直接知りたいときに便利
+	launchファイル内で以下のように使用
+		<param name="tilt_laser_topic" value="scan_tilt"/>
+		<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />

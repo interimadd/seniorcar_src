@@ -46,7 +46,9 @@ void Height_Map::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 		if( 0 <= num_x && num_x < MAP_SIZE_X * 2 ){
 			num_y = int( float(MAP_SIZE_Y) + ( laser_point_data.points[i].y - center_y ) / HORIZONTAL_RESOLUTION );
 			if( 0 <= num_y && num_y < MAP_SIZE_Y * 2 ){
-				height_map[num_x][num_y] = laser_point_data.points[i].z;
+				if(laser_point_data.points[i].z < 0.5){
+					height_map[num_x][num_y] = laser_point_data.points[i].z;
+				}
 			}
 		}
 	}
@@ -57,6 +59,11 @@ void Height_Map::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 }
 
 
+void Height_Map::TranslateRealCordinateToIndex(int *return_index,float pose[2]){
+	return_index[0] = int( float(MAP_SIZE_X) + ( pose[0] - center_x ) / HORIZONTAL_RESOLUTION );
+	return_index[1] = int( float(MAP_SIZE_Y) + ( pose[1] - center_y ) / HORIZONTAL_RESOLUTION );
+};
+
 void Height_Map::HeightMapToPointCloud(sensor_msgs::PointCloud *out){
 
 	for(int i=0 ; i < MAP_SIZE_X * 2 ; i++){
@@ -64,6 +71,25 @@ void Height_Map::HeightMapToPointCloud(sensor_msgs::PointCloud *out){
 			if( interpolated_height_map[i][j] != NOT_DETECT){
 				out->points.push_back(TranslateIndexToRealCordinate(i,j));
 			}
+		}
+	}
+
+}
+
+
+void Height_Map::TireHeightMapToPointCloud(sensor_msgs::PointCloud *out){
+
+	int SPACE = tire_radius_in_grid + 3;
+
+	for(int i=SPACE ; i < MAP_SIZE_X * 2 - SPACE ; i++){
+		for(int j=SPACE ; j < MAP_SIZE_Y * 2 - SPACE ;j++){
+			//if( interpolated_height_map[i][j] != NOT_DETECT){
+				geometry_msgs::Point32 tmp_p = TranslateIndexToRealCordinate(i,j);
+				tmp_p.z = returnTireHeightInGrid(i,j);
+				if(tmp_p.z > -2.0 && tmp_p.z < 1.5){
+					out->points.push_back(tmp_p);
+				}
+			//}
 		}
 	}
 
@@ -211,6 +237,68 @@ inline RotateEnable Height_Map::isEnableRolling(int x_index,int y_index){
 	return ENABLE;
 
 }
+
+
+inline float Height_Map::returnTireHeightInGrid(int x_index,int y_index){
+
+	const float START_HEIGHT = -10.0;
+	float max_height = START_HEIGHT;
+	int max_height_grid;
+	
+	for(int i=0;i<tire_radius_in_grid;i++){
+		for(int j=0;j<half_tire_width_in_grid;j++){
+
+			if( max_height < interpolated_height_map[x_index + i][y_index + j] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index + i][y_index + j] + tire_height[i];
+				max_height_grid = i;
+			}
+
+			if( max_height < interpolated_height_map[x_index - i][y_index + j] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index - i][y_index + j] + tire_height[i];
+				max_height_grid = i;
+			}
+
+			if( max_height < interpolated_height_map[x_index + i][y_index - j] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index + i][y_index - j] + tire_height[i];
+				max_height_grid = i;
+			}
+
+			if( max_height < interpolated_height_map[x_index - i][y_index - j] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index - i][y_index - j] + tire_height[i];
+				max_height_grid = i;
+			}
+		}
+	}
+
+	for(int i=0;i<tire_radius_in_grid;i++){
+		for(int j=0;j<half_tire_width_in_grid;j++){
+
+			if( max_height < interpolated_height_map[x_index + j][y_index + i] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index + j][y_index + i] + tire_height[i];
+				max_height_grid = i;
+			}
+
+			if( max_height < interpolated_height_map[x_index - j][y_index + i] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index - j][y_index + i] + tire_height[i];
+				max_height_grid = i;
+			}
+
+			if( max_height < interpolated_height_map[x_index + j][y_index - i] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index + j][y_index - i] + tire_height[i];
+				max_height_grid = i;
+			}
+
+			if( max_height < interpolated_height_map[x_index - j][y_index - i] + tire_height[i] ){
+				max_height = interpolated_height_map[x_index - j][y_index - i] + tire_height[i];
+				max_height_grid = i;
+			}
+		}
+	}
+
+	return max_height;
+
+}
+
 
 
 void  Height_Map::RotateEnableAreaToPointCloud(sensor_msgs::PointCloud *out){

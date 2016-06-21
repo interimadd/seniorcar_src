@@ -195,9 +195,16 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 add_executable(laser_point_to_height_map 
   src/height_map/height_map.cpp
   src/height_map/laser_point_to_height_map.cpp
+  src/height_map/risk_calculater.cpp
 )
 target_link_libraries(laser_point_to_height_map ${catkin_LIBRARIES})
 
 add_executable(laser_scan_to_point_cloud src/laser_scan_to_point_cloud.cpp)
 target_link_libraries(laser_scan_to_point_cloud ${catkin_LIBRARIES})
 
+add_executable(laser_point_to_riskcalculater 
+  src/height_map/height_map.cpp
+  src/height_map/risk_calculater.cpp
+  src/height_map/laser_point_to_riskcalculater.cpp
+)
+target_link_libraries(laser_point_to_riskcalculater ${catkin_LIBRARIES})

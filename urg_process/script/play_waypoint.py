@@ -63,7 +63,10 @@ class playRecordedWaypoint:
 
     def get_waypoints_from_txt(self):
 
-        f=open('waypoint.txt','r')
+        filename = rospy.get_param('waypoint_file_path',"waypoint.txt'")
+        print "open " + str(filename)
+
+        f=open(filename,'r')
         num = 0
 
         for i in f.readlines():

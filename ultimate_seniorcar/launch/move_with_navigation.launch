@@ -10,6 +10,7 @@
     <arg name="canusb_port"        value="/dev/ttyUSB0"/>
 
     <arg name="map_path"           value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/map.yaml"/>
+    <param name="waypoint_fole_path" value="/home/ishikawa/waypoint.txt"/>
 
 	<!-- 各種センサへの接続 -->
     <!--

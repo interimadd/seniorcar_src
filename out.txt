@@ -1,0 +1,61 @@
+CMakeLists.txt
+README.txt
+README~
+ira_laser_tools
+out.txt
+point_cloud_converter-hydro-devel
+rosbag_to_csv
+rt_usb_9axisimu_driver
+seniorcar_test
+sensor_utility
+ultimate_seniorcar
+urg_process
+urg_process2
+velodyne
+合計 64
+drwxrwxr-x 13 ishikawa ishikawa 4096  5月 20 11:04 .
+drwxrwxr-x  5 ishikawa ishikawa 4096  5月 10 15:50 ..
+drwxrwxr-x  8 ishikawa ishikawa 4096  5月 17 18:42 .git
+lrwxrwxrwx  1 ishikawa ishikawa   49  3月 27 18:52 CMakeLists.txt -> /opt/ros/indigo/share/catkin/cmake/toplevel.cmake
+-rw-rw-r--  1 ishikawa ishikawa  359  3月 29 12:02 README.txt
+-rw-rw-r--  1 ishikawa ishikawa  232  3月 27 22:50 README~
+drwxrwxr-x  6 ishikawa ishikawa 4096  4月 13 13:38 ira_laser_tools
+-rw-rw-r--  1 ishikawa ishikawa  212  5月 20 11:04 out.txt
+drwx------  5 ishikawa ishikawa 4096  4月  8 17:52 point_cloud_converter-hydro-devel
+drwxrwxr-x  4 ishikawa ishikawa 4096  5月 14 18:50 rosbag_to_csv
+drwxrwxr-x  6 ishikawa ishikawa 4096  3月 27 19:38 rt_usb_9axisimu_driver
+drwxrwxr-x  6 ishikawa ishikawa 4096  5月  6 13:41 seniorcar_test
+drwxrwxr-x  6 ishikawa ishikawa 4096  4月 13 16:38 sensor_utility
+drwx------  9 ishikawa ishikawa 4096  4月 29 09:22 ultimate_seniorcar
+drwxrwxr-x  5 ishikawa ishikawa 4096  4月 14 23:35 urg_process
+drwx------  4 ishikawa ishikawa 4096  5月 11 14:30 urg_process2
+drwx------  8 ishikawa ishikawa 4096  1月 20 16:41 velodyne
+... logging to /home/ishikawa/.ros/log/549a25b6-1e2f-11e6-8c82-a4c49448e842/roslaunch-ishikawa-Dell-Precision-M3800-5255.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+]2;roscore
+[1mstarted roslaunch server http://ishikawa-Dell-Precision-M3800:44598/[0m
+ros_comm version 1.11.16
+
+
+SUMMARY
+========
+
+PARAMETERS
+ * /rosdistro: indigo
+ * /rosversion: 1.11.16
+
+NODES
+
+auto-starting new master
+[1mprocess[master]: started with pid [5267][0m
+[1mROS_MASTER_URI=http://ishikawa-Dell-Precision-M3800:11311/[0m
+]2;roscore http://ishikawa-Dell-Precision-M3800:11311/
+[1msetting /run_id to 549a25b6-1e2f-11e6-8c82-a4c49448e842[0m
+[1mprocess[rosout-1]: started with pid [5280][0m
+started core service [/rosout]
+[rosout-1] killing on exit
+[master] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m
