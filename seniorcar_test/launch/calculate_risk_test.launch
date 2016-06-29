@@ -5,19 +5,21 @@
 	<param name="offset_between_ground_and_base_link" value="0.125"/>
 
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_front" args="1.06 0.0 0.27 0.0 0.0 0.0 /base_link /laser_front 40" />
-	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.53 0.0 0.55 0.0 /base_link /laser_tilt 40" />
+	<!--<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.53 0.0 0.65 0.0 /base_link /laser_tilt 40" /> --> <!-- 2016/6/20以前のパラメータ -->
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.54 0.0 0.42 0.0 /base_link /laser_tilt 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_back" args="-0.16 0.0 0.27 3.14 0.0 0.0 /base_link /laser_back 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="1.0 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_imu" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /imu 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 0.6 0.0 0.0 0.0 /base_link /velodyne 40" />
 	<node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom"/>
+	<node pkg="ultimate_seniorcar" type="seniorcar_odometry.py" name="odo" />
 
 	<include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
 
 	<node pkg="urg_process" type="laser_point_to_riskcalculater" name="laser_point_to_riskcalculater" output="screen"/>
 	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/seniorcar_bag/exp2_filtered.bag --delay=1 --clock"/>
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/indoor_straight/4km_filtered.bag --delay=1 --clock"/>
 	
 	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/hegiht_map_visualize.rviz"/>
 

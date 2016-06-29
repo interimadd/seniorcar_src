@@ -14,14 +14,14 @@
 */
 const float CALCULATE_TIME_STEP = 0.1;	// 何秒刻みの評価をするのか
 const float CALCULATE_TIME_LENGTH = 3;	// 何秒後までの未来を評価するのか
-const float CALCULATE_STEER_DEG_STEP = 2.0;	// 操舵角度何度ごとに計算を行うか
-const float MAX_STEER_DEG_CHANGE = 4.0;		// 今の操舵角度から何度変化するところまで計算するか
+const float CALCULATE_STEER_DEG_STEP = 4.0;	// 操舵角度何度ごとに計算を行うか
+const float MAX_STEER_DEG_CHANGE = 20.0;		// 今の操舵角度から何度変化するところまで計算するか
 
 const int PATH_POINT_NUM =   int( CALCULATE_TIME_LENGTH / CALCULATE_TIME_STEP ) + 1;	// 1つの経路を何個の点で表現するか
 const int DEG_CALCULTE_NUM = int( MAX_STEER_DEG_CHANGE * 2.0 / CALCULATE_STEER_DEG_STEP ) + 1;	// 何個の経路を生成するか
 
-const float DENGER_ANGLE = 0.5;  // 走れない角度
-const float DENGER_Y_ZMP = SENIORCAR_HARF_TREAD_LENGTH - 0.1; // ここまでZMPが来るとまずい閾値
+const float DENGER_ANGLE = 0.4;  // 走れない角度
+const float DENGER_Y_ZMP = SENIORCAR_HARF_TREAD_LENGTH*2 - 0.1; // ここまでZMPが来るとまずい閾値
 
 const float MIN_VHEICLE_VELOCITY = 0.55;	//考慮する車両の最低速度
 

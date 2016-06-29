@@ -1,1 +1,6 @@
 *.make
+*.cmake
+*.log
+*.bin
+*~
+Makefile

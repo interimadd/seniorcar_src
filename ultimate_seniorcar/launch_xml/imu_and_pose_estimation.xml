@@ -1,7 +1,8 @@
 <launch>
 
 	<arg name="imu_port" />
-
+  
+  <param name="port" value="$(arg imu_port)" />
 	<node pkg="rt_usb_9axisimu_driver" type="rt_usb_9axisimu_driver" name="rt_usb_9axisimu_driver" args="--screen">
     	<param name="port" value="$(arg imu_port)" />
       <param name="frame_id" value="imu" />

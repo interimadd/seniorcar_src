@@ -174,6 +174,7 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 	if(now_state.vehicle_velocity < MIN_VHEICLE_VELOCITY){
 		now_state.vehicle_velocity = MIN_VHEICLE_VELOCITY;
 	}
+	now_pos.position.y += 0.0;
 
 	// 予測経路の更新
 	generatePath(now_pos,now_state);
@@ -181,15 +182,26 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 	int max_j = PATH_POINT_NUM;
 
 	for(int i=0; i < DEG_CALCULTE_NUM; i++){
-		cout << "output  " << now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i) << "deg" << endl;
+		//cout << "output  " << now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i) << "deg" << endl;
 		for(j=1; j < PATH_POINT_NUM; j++){
 			returnTirePositionAtGivenPose(&tmp_calculated_state,predicted_path[i][j]);
 			calculateSlopeOfVehicle(&tmp_calculated_state);
 			
-			cout << "pos x:" << predicted_path[i][j][0] << ", y:" << predicted_path[i][j][1] << ", th:" << predicted_path[i][j][2]   
+			/*
+			cout << "pos x:" << predicted_path[i][j][0] << ", y:" << predicted_path[i][j][1] << ", th:" << predicted_path[i][j][2] * RAD_TO_DEG
 			<< "0 pitch:"<< tmp_calculated_state.calculated_pitch_angle[0] * RAD_TO_DEG << " roll:" << tmp_calculated_state.calculated_roll_angle[0] * RAD_TO_DEG<< " zmp:" << calculateZMP(tmp_calculated_state.calculated_roll_angle[0] ,now_state.vehicle_velocity, now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i))
 			<< ",1 pitch:"<< tmp_calculated_state.calculated_pitch_angle[1] * RAD_TO_DEG<< " roll:" << tmp_calculated_state.calculated_roll_angle[1] *RAD_TO_DEG<< " zmp:" << calculateZMP(tmp_calculated_state.calculated_roll_angle[1] ,now_state.vehicle_velocity, now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i)) << endl;
-			
+			*/
+
+			/*
+			cout << "tire FR:" << tmp_calculated_state.tire_pos[0][0] << "," << tmp_calculated_state.tire_pos[0][1] << "," << tmp_calculated_state.tire_pos[0][2] 
+			<< " FL:" << tmp_calculated_state.tire_pos[1][0] << "," << tmp_calculated_state.tire_pos[1][1] << "," << tmp_calculated_state.tire_pos[1][2]
+			<< " BR:" << tmp_calculated_state.tire_pos[2][0] << "," << tmp_calculated_state.tire_pos[2][1] << "," << tmp_calculated_state.tire_pos[2][2]
+			<< " BL:" << tmp_calculated_state.tire_pos[3][0] << "," << tmp_calculated_state.tire_pos[3][1] << "," << tmp_calculated_state.tire_pos[3][2] <<endl;
+			*/
+
+			//cout << predicted_path[i][j][0] << "," << predicted_path[i][j][1] << "," << tmp_calculated_state.calculated_pitch_angle[0] * RAD_TO_DEG << "," << tmp_calculated_state.calculated_pitch_angle[1] * RAD_TO_DEG << "," << (tmp_calculated_state.calculated_pitch_angle[0] * RAD_TO_DEG + tmp_calculated_state.calculated_pitch_angle[1] * RAD_TO_DEG)/2.0 << endl;
+
 			if( !canDrive(tmp_calculated_state.calculated_pitch_angle[0],tmp_calculated_state.calculated_roll_angle[0],calculateZMP(tmp_calculated_state.calculated_roll_angle[0] ,now_state.vehicle_velocity, now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i)))){
 				break;
 			}
@@ -204,7 +216,7 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 
 	float TTI = float(max_j) * CALCULATE_TIME_STEP;
 
-	cout << TTI << endl << endl;
+	cout << TTI << endl;
 
 	return TTI;
 

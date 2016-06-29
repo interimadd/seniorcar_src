@@ -52,5 +52,9 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         now = rospy.get_rostime()
+        roll += 180.0
+        if roll > 90:
+            roll -= 360
+        pitch -= 1.0
         print "%d.%09d,%f,%f,%f,%f,%f" % ( now.secs,now.nsecs,now_odom.pose.pose.position.x,now_odom.pose.pose.position.y,roll,pitch,yaw)
         rate.sleep()

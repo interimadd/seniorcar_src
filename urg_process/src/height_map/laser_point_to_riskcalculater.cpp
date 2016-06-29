@@ -36,8 +36,7 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
 
   if(++i%2==0){
     ros::Time now = ros::Time::now();
-    //cout << now.nsec <<  ",";
-    printf("time:%d.%09d\n",now.sec,now.nsec);
+    printf("time,%d.%09d,",now.sec,now.nsec);
     calculater.calculateRisk(now_pos,now_state);
   }
   

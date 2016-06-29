@@ -2,10 +2,10 @@
 
 	<!-- USBポート番号の定義 -->
 	
-    <arg name="frontLRF_port"      value="/dev/ttyACM2"/>
-    <arg name="front_tiltLRF_port" value="/dev/ttyACM1"/>
-    <arg name="backLRF_port"       value="/dev/ttyACM0"/>
-    <arg name="imu_port"           value="/dev/ttyACM3"/>
+    <arg name="frontLRF_port"      value="/dev/ttyACM4"/>
+    <arg name="front_tiltLRF_port" value="/dev/ttyACM2"/>
+    <arg name="backLRF_port"       value="/dev/ttyACM3"/>
+    <arg name="imu_port"           value="/dev/ttyACM1"/>
     <arg name="steer_motor_port"   value="/dev/ttyACM0"/>
     <arg name="canusb_port"        value="/dev/ttyUSB0"/>
 
