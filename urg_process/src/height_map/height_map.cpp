@@ -47,7 +47,10 @@ void Height_Map::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 			num_y = int( float(MAP_SIZE_Y) + ( laser_point_data.points[i].y - center_y ) / HORIZONTAL_RESOLUTION );
 			if( 0 <= num_y && num_y < MAP_SIZE_Y * 2 ){
 				if(laser_point_data.points[i].z < 0.5){
-					height_map[num_x][num_y] = laser_point_data.points[i].z;
+					if( height_map[num_x][num_y] < laser_point_data.points[i].z && laser_point_data.points[i].z > NOT_DETECT){
+						height_map[num_x][num_y] = laser_point_data.points[i].z;
+					}
+					//height_map[num_x][num_y] = laser_point_data.points[i].z;
 				}
 			}
 		}
@@ -62,7 +65,8 @@ void Height_Map::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 void Height_Map::TranslateRealCordinateToIndex(int *return_index,float pose[2]){
 	return_index[0] = int( float(MAP_SIZE_X) + ( pose[0] - center_x ) / HORIZONTAL_RESOLUTION );
 	return_index[1] = int( float(MAP_SIZE_Y) + ( pose[1] - center_y ) / HORIZONTAL_RESOLUTION );
-};
+}
+
 
 void Height_Map::HeightMapToPointCloud(sensor_msgs::PointCloud *out){
 
@@ -592,6 +596,38 @@ void Height_Map::InterpolateMap(){
 	for(int i=2 ; i < MAP_SIZE_X * 2 - 2 ; i++){
 		for(int j=2 ; j < MAP_SIZE_Y * 2 - 2 ;j++){
 
+			height_sum = 0 ;
+			sum_num = 0 ;
+			for(int n=-1;n<=1;n++){
+				for(int m=-1;m<=1;m++){
+					if(height_map[i+n][j+m] != NOT_DETECT){
+						sum_num += 1;
+						height_sum += height_map[i+n][j+m];
+					}
+				}
+			}
+			height_sum = height_sum / sum_num ;
+
+			if(height_map[i][j] == NOT_DETECT){
+				if(sum_num>2){
+					interpolated_height_map[i][j] = height_sum;
+				}
+				else{
+					interpolated_height_map[i][j] = NOT_DETECT;
+				}
+			}
+			else{
+				// まわりから見てトビのある点の場合は消す
+				if( height_map[i][j] - height_sum > 0.2){
+					height_map[i][j] = NOT_DETECT ;
+					interpolated_height_map[i][j] = NOT_DETECT ;
+				}
+				else{
+					interpolated_height_map[i][j] = height_map[i][j] ;
+				}
+			}
+
+			/*
 			if(height_map[i][j] == NOT_DETECT){
 				for(int n=-1;n<=1;n++){
 					for(int m=-1;m<=1;m++){
@@ -613,6 +649,7 @@ void Height_Map::InterpolateMap(){
 			else{
 				interpolated_height_map[i][j] = height_map[i][j];
 			}
+			*/
 		
 		}
 	}

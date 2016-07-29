@@ -1,0 +1,14 @@
+<launch>
+
+ <arg name="map_path" />
+
+ <!-- Run the map server --> 
+ <node pkg="map_server" type="map_server" name="map_serve" args="$(arg map_path)"/>
+
+ <!--- Run AMCL -->   
+ <include file="$(find ultimate_seniorcar)/launch_xml/amcl.xml" /> 
+
+ <!-- 目の前に障害物があったときに停止する信号を送るノード -->
+ <node pkg="urg_process" type="detect_front_object.py" name="detect_front_object" />
+
+</launch>

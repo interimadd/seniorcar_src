@@ -3,9 +3,11 @@
 RiskCalculater::RiskCalculater(float pos_x,float pos_y,int map_size_x,int map_size_y,float horizontal_resolution) : Height_Map( pos_x ,pos_y ,map_size_x ,map_size_y ,horizontal_resolution)
 {
 	predicted_path.resize(DEG_CALCULTE_NUM);
+
 	for(int i=0; i < DEG_CALCULTE_NUM; i++){
 		predicted_path[i].resize(PATH_POINT_NUM);
 	}
+
 	for(int i=0; i < DEG_CALCULTE_NUM; i++){
 		for(int j=0; j < PATH_POINT_NUM; j++){
 			predicted_path[i][j].resize(3);
@@ -57,6 +59,10 @@ void RiskCalculater::returnTirePositionAtGivenPose(CalculatedVehicleState *retur
 	int FRONT_RIGHT = 1;
 	int BACK_LEFT	= 2;
 	int BACK_RIGHT	= 3;
+
+	return_tire_pos->vehicle_pose[X] = pose[X];
+	return_tire_pos->vehicle_pose[Y] = pose[Y];
+	return_tire_pos->vehicle_pose[TH] = pose[TH];
 
 	return_tire_pos->tire_pos[FRONT_LEFT][X] = pose[X] + SENIORCAR_WHEEL_BASE_LENGTH * cos(pose[TH]) - SENIORCAR_HARF_TREAD_LENGTH * sin(pose[TH]);
 	return_tire_pos->tire_pos[FRONT_LEFT][Y] = pose[Y] + SENIORCAR_WHEEL_BASE_LENGTH * sin(pose[TH]) + SENIORCAR_HARF_TREAD_LENGTH * cos(pose[TH]);
@@ -174,12 +180,15 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 	if(now_state.vehicle_velocity < MIN_VHEICLE_VELOCITY){
 		now_state.vehicle_velocity = MIN_VHEICLE_VELOCITY;
 	}
-	now_pos.position.y += 0.0;
+	now_pos_z = now_pos.position.z + 0.2;
 
 	// 予測経路の更新
 	generatePath(now_pos,now_state);
 	int j = 0;
 	int max_j = PATH_POINT_NUM;
+
+	vector < CalculatedVehicleState > reset_array;
+	calculated_state_array = reset_array;
 
 	for(int i=0; i < DEG_CALCULTE_NUM; i++){
 		//cout << "output  " << now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i) << "deg" << endl;
@@ -203,11 +212,14 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 			//cout << predicted_path[i][j][0] << "," << predicted_path[i][j][1] << "," << tmp_calculated_state.calculated_pitch_angle[0] * RAD_TO_DEG << "," << tmp_calculated_state.calculated_pitch_angle[1] * RAD_TO_DEG << "," << (tmp_calculated_state.calculated_pitch_angle[0] * RAD_TO_DEG + tmp_calculated_state.calculated_pitch_angle[1] * RAD_TO_DEG)/2.0 << endl;
 
 			if( !canDrive(tmp_calculated_state.calculated_pitch_angle[0],tmp_calculated_state.calculated_roll_angle[0],calculateZMP(tmp_calculated_state.calculated_roll_angle[0] ,now_state.vehicle_velocity, now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i)))){
+				calculated_state_array.push_back(tmp_calculated_state);
 				break;
 			}
 			if( !canDrive(tmp_calculated_state.calculated_pitch_angle[1],tmp_calculated_state.calculated_roll_angle[1],calculateZMP(tmp_calculated_state.calculated_roll_angle[1] ,now_state.vehicle_velocity, now_state.steer_angle - MAX_STEER_DEG_CHANGE + CALCULATE_STEER_DEG_STEP * float(i)))){
+				calculated_state_array.push_back(tmp_calculated_state);
 				break;
 			}
+			calculated_state_array.push_back(tmp_calculated_state);
 		}
 		if( max_j > j){
 			max_j = j;
@@ -216,7 +228,7 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 
 	float TTI = float(max_j) * CALCULATE_TIME_STEP;
 
-	cout << TTI << endl;
+	cout << "," << now_pos.position.x << "," << TTI << endl;
 
 	return TTI;
 
@@ -257,3 +269,20 @@ bool RiskCalculater::canDrive(float pitch_angle,float roll_angle,float y_zmp){
 	return true;
 
 };
+
+
+void RiskCalculater::returnCalculatedVehicleState(geometry_msgs::PoseArray *out){
+
+	geometry_msgs::Pose tmp_pose;
+	tmp_pose.position.z = now_pos_z;
+
+	for(int i=0; i<calculated_state_array.size(); i++){
+		tmp_pose.position.x = calculated_state_array[i].vehicle_pose[0];
+		tmp_pose.position.y = calculated_state_array[i].vehicle_pose[1];
+		tmp_pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(calculated_state_array[i].calculated_roll_angle[0],calculated_state_array[i].calculated_pitch_angle[0]*3.0,calculated_state_array[i].vehicle_pose[2]);
+		out->poses.push_back(tmp_pose);
+		tmp_pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(calculated_state_array[i].calculated_roll_angle[1],calculated_state_array[i].calculated_pitch_angle[1]*3.0,calculated_state_array[i].vehicle_pose[2]);
+		out->poses.push_back(tmp_pose);
+	}
+
+}

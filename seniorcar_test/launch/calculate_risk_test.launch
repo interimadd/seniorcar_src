@@ -19,7 +19,7 @@
 	<node pkg="urg_process" type="laser_point_to_riskcalculater" name="laser_point_to_riskcalculater" output="screen"/>
 	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/indoor_straight/4km_filtered.bag --delay=1 --clock"/>
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/uneven_road/uneven2_2_filtered.bag --delay=1 --clock"/>
 	
 	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/hegiht_map_visualize.rviz"/>
 

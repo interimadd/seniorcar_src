@@ -14,7 +14,7 @@
 
 	<include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
 
-	<node pkg="rosbag" type="play" name="play" args="/home/ishikawa/bagfiles/seniorcar_bag/exp4_filtered.bag --delay=1 --clock"/>
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/glass_road/glass_road_filtered.bag --delay=1 --clock"/>
 	
 	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/seniorcar_visualize.rviz"/>
 

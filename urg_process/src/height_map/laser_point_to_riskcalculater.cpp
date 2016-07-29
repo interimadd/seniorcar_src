@@ -28,9 +28,9 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
 
 	calculater.RecordSensorData(*msg);
 
-	sensor_msgs::PointCloud send_point_cloud,result_point_cloud;
+  
+	sensor_msgs::PointCloud send_point_cloud;
 	send_point_cloud.header = msg->header;
-  result_point_cloud.header = msg->header;
   calculater.HeightMapToPointCloud(&send_point_cloud);
   heightmap_pub.publish(send_point_cloud);
 
@@ -39,6 +39,11 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
     printf("time,%d.%09d,",now.sec,now.nsec);
     calculater.calculateRisk(now_pos,now_state);
   }
+
+  geometry_msgs::PoseArray send_pose_array;
+  send_pose_array.header = msg->header;
+  calculater.returnCalculatedVehicleState(&send_pose_array);
+  result_pub.publish(send_pose_array);
   
   /*
   if(++i%3==0){
@@ -76,6 +81,7 @@ int main(int argc, char **argv)
 
   calculater.SetTireRadius(0.14, 0.2);
   heightmap_pub = n.advertise<sensor_msgs::PointCloud>("height_map", 1000);
+  result_pub   = n.advertise<geometry_msgs::PoseArray>("calculated_pose",1000);
   ros::Subscriber sub = n.subscribe("laser_point", 1000, PointCloudCallback);
   ros::Subscriber state_sub = n.subscribe("seniorcar_state", 1000, SeniorcarStateCallback);
   ros::Subscriber odom_sub = n.subscribe("seniorcar_odometry", 1000, OdmetryCallback); 

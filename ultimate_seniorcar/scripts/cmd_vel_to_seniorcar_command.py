@@ -5,6 +5,7 @@ import rospy
 import math
 import numpy
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Bool
 from ultimate_seniorcar.msg import SeniorcarState
 
 WHEEL_BASE = 0.9
@@ -17,8 +18,10 @@ class CalculateVoltage:
 	seniorcar_command.steer_angle = 0
 	seniorcar_command.max_velocity = 2.0
 
-	const_A = 0.97
+	const_A = 0.0
 	new_steer_angle = 0.0
+
+	is_detect_object = False
 
 	def __init__(self):
 		rospy.init_node('cmd_vel_to_seniorcar_command')
@@ -26,6 +29,7 @@ class CalculateVoltage:
 	
 	def subscribe_cmd_vel(self):
 		rospy.Subscriber("cmd_vel", Twist, self.cmd_velCallback)
+		rospy.Subscriber("detect_front_object",Bool, self.detectObjectCallback)
 
 	def cmd_velCallback(self,msg):
 
@@ -48,10 +52,16 @@ class CalculateVoltage:
 			self.seniorcar_command.max_velocity = msg.linear.x * 3.6
 
 
-		if msg.linear.x > 0.001:
+		if msg.linear.x > 0.01:
 			# 目標角速度から操舵角を計算。35度の範囲に収める
 			self.new_steer_angle = numpy.clip(math.atan(msg.angular.z * WHEEL_BASE / msg.linear.x) * 180.0 / 3.1415 , -35.0 ,35.0)
 
+		# 前方に障害物を検知した場合は停止する
+		if self.is_detect_object:
+			self.seniorcar_command.accel_opening = 0
+
+	def detectObjectCallback(self,msg):
+		self.is_detect_object = msg.data
 
 	def calculate_and_publish_voltage(self):
 		rate = rospy.Rate(50)
