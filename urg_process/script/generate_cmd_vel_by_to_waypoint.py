@@ -85,6 +85,8 @@ class playRecordedWaypoint:
         map_yaw = math.atan2( self.recorded_waypoints[self.index].position.y - self.pose_info.position.y , self.recorded_waypoints[self.index].position.x - self.pose_info.position.x)
         div_yaw = map_yaw - vehicle_yaw
         div_yaw_mod = div_yaw
+
+        # -PIと+PIの間が不連続に切り替わるため、この付近での整合性を持たせる処理
         if div_yaw > 2.0:
             div_yaw_mod -= 2 * math.pi
         elif div_yaw < -2.0:
