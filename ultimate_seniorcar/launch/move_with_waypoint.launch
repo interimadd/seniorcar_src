@@ -9,8 +9,8 @@
     <arg name="steer_motor_port"   value="/dev/ttyACM1"/>
     <arg name="canusb_port"        value="/dev/ttyUSB0"/>
 
-    <arg name="map_path"           value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/guruguru_map.yaml"/>
-    <param name="waypoint_fole_path" value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/guruguru_waypoint.txt"/>
+    <arg name="map_path"           value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/long_guruguru_map.yaml"/>
+    <param name="waypoint_file_path" value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/long_guruguru_waypoint.txt"/>
 
 	<!-- 各種センサへの接続 -->
     <!--

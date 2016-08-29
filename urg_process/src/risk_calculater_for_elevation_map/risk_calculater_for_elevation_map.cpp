@@ -18,10 +18,14 @@ RiskCalculater::RiskCalculater(float pos_x,float pos_y,int map_size_x,int map_si
 	// タイヤのパラメータからタイヤの大きさをグリッドに離散化
 	tire_radius_in_grid =  SENIORCAR_WHEEL_RADIUS / HORIZONTAL_RESOLUTION;
 	half_tire_width_in_grid = SENIORCAR_WHEEL_THICKNESS / (2.0 * HORIZONTAL_RESOLUTION);
+	if(half_tire_width_in_grid==0){ half_tire_width_in_grid = 1; }
+	if(tire_radius_in_grid==0){ tire_radius_in_grid = 1; }
 
-	for(int i=0;i<tire_radius_in_grid;i++){
-		float tmp_height = sqrt(pow(SENIORCAR_WHEEL_RADIUS,2) - pow(HORIZONTAL_RESOLUTION*i,2));
-		tire_height.push_back(tmp_height);
+	for(int i=0;i<=tire_radius_in_grid;i++){
+		float calc_height = pow(SENIORCAR_WHEEL_RADIUS,2) - pow(HORIZONTAL_RESOLUTION*i,2);
+		if( calc_height < 0 ) calc_height = 0;
+		calc_height = sqrt(calc_height);
+		tire_height.push_back(calc_height);
 	}
 	
 };
@@ -184,6 +188,7 @@ float RiskCalculater::calculatePitchAngleFrom2Vectors(float vec1[3],float vec2[3
 float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_seniorcar::SeniorcarState now_state){
 
 	CalculatedVehicleState tmp_calculated_state;
+	cout << "calstart" ;
 	//cout << endl << endl << "start  now_pos  x:" << now_pos.position.x << ", y:" << now_pos.position.y << ", th:" << now_pos.orientation.w << endl;
 
 	//  速度0だと崖のすぐ側でもリスク0となってしまうので、一定値以上の速度を持つように調整
@@ -304,8 +309,8 @@ inline float RiskCalculater::returnTireHeightInGrid(int x_index,int y_index){
 	float max_height = START_HEIGHT;
 	int max_height_grid;
 	
-	for(int i=0;i<tire_radius_in_grid;i++){
-		for(int j=0;j<half_tire_width_in_grid;j++){
+	for(int i=0;i<=tire_radius_in_grid;i++){
+		for(int j=0;j<=half_tire_width_in_grid;j++){
 
 			if( max_height < interpolated_height_map[x_index + i][y_index + j] + tire_height[i] ){
 				max_height = interpolated_height_map[x_index + i][y_index + j] + tire_height[i];
@@ -329,8 +334,8 @@ inline float RiskCalculater::returnTireHeightInGrid(int x_index,int y_index){
 		}
 	}
 
-	for(int i=0;i<tire_radius_in_grid;i++){
-		for(int j=0;j<half_tire_width_in_grid;j++){
+	for(int i=0;i<=tire_radius_in_grid;i++){
+		for(int j=0;j<=half_tire_width_in_grid;j++){
 
 			if( max_height < interpolated_height_map[x_index + j][y_index + i] + tire_height[i] ){
 				max_height = interpolated_height_map[x_index + j][y_index + i] + tire_height[i];

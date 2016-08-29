@@ -16,6 +16,9 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
       ros::Duration(1.0).sleep();
     }
 
+  geometry_msgs::Pose now_pos;
+  now_pos = now_odom.pose.pose;
+
 	elevation_map.RecordSensorData(*msg);
 
 	sensor_msgs::PointCloud send_point_cloud,result_point_cloud,road_point_cloud,grass_point_cloud,others_point_cloud;
@@ -26,6 +29,7 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
   others_point_cloud.header = msg->header;
 
   if(++i%2==0){
+    elevation_map.calculateRisk(now_pos, now_state);
     elevation_map.VarianceMapToPointCloud(&result_point_cloud);
     result_pub.publish(result_point_cloud);
     elevation_map.HeightMapToPointCloud(&send_point_cloud);
@@ -35,6 +39,17 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
     grass_pub.publish(grass_point_cloud);
     others_pub.publish(others_point_cloud);
   }
+
+  /*
+  if(i%10==0){
+    elevation_map.printElevationMapData();
+  }
+  */
+
+  geometry_msgs::PoseArray send_pose_array;
+  send_pose_array.header = msg->header;
+  elevation_map.returnCalculatedVehicleState(&send_pose_array);
+  pose_pub.publish(send_pose_array);
   
   /*
   if(++i%3==0){
@@ -53,6 +68,17 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
 }
 
 
+void SeniorcarStateCallback(const ultimate_seniorcar::SeniorcarState& msg){
+  now_state = msg;
+}
+
+
+void OdmetryCallback(const nav_msgs::Odometry& msg){
+  now_odom = msg;
+}
+
+
+
 int main(int argc, char **argv)
 {
 
@@ -68,12 +94,15 @@ int main(int argc, char **argv)
 
   heightmap_pub = n.advertise<sensor_msgs::PointCloud>("height_map", 1000);
   result_pub = n.advertise<sensor_msgs::PointCloud>("variance_map", 1000);
+  pose_pub   = n.advertise<geometry_msgs::PoseArray>("calculated_pose",1000);
 
   road_pub  = n.advertise<sensor_msgs::PointCloud>("road_map", 1000);
   grass_pub = n.advertise<sensor_msgs::PointCloud>("grass_map", 1000);
   others_pub = n.advertise<sensor_msgs::PointCloud>("other_map", 1000);
 
   ros::Subscriber sub = n.subscribe("laser_point", 1000, PointCloudCallback);
+  ros::Subscriber state_sub = n.subscribe("seniorcar_state", 1000, SeniorcarStateCallback);
+  ros::Subscriber odom_sub = n.subscribe("seniorcar_odometry", 1000, OdmetryCallback); 
 
   printf("start3\n");
 

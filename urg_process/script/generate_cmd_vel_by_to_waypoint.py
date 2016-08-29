@@ -13,8 +13,9 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Quaternion
 from tf.transformations import euler_from_quaternion
 
-APPRORCH_THRESHOLD = 3.0  # 何mまで近づいたら次の点を指示するか
-P_GAIN = 1.0 # 偏差に対してどれだけの目標角速度値を出力するか
+APPRORCH_THRESHOLD = 3.0    # 何mまで近づいたら次の点を指示するか
+P_GAIN = 1.0                # 偏差に対してどれだけの目標角速度値を出力するか
+TARGET_VEL = 1.5            # デフォルトの直進速度値
 
 class playRecordedWaypoint:
 
@@ -33,6 +34,7 @@ class playRecordedWaypoint:
     def calc_distance_between_poses(self,pose1,pose2):
         return math.sqrt( abs( (pose1.position.x - pose2.position.x)*(pose1.position.x - pose2.position.x) + (pose1.position.y - pose2.position.y)*(pose1.position.y - pose2.position.y) ) )
 
+    # 自車両位置情報と目標通過点の更新
     def callback(self,data):
         self.pose_info = data.pose.pose
     
@@ -47,7 +49,7 @@ class playRecordedWaypoint:
 
     def get_waypoints_from_txt(self):
 
-        filename = rospy.get_param('waypoint_file_path',"/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/guruguru_waypoint.txt")
+        filename = rospy.get_param('waypoint_file_path',"/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/long_guruguru_waypoint.txt")
         print "open " + str(filename)
 
         f=open(filename,'r')
@@ -77,6 +79,8 @@ class playRecordedWaypoint:
         f.close()
         print "success to load %d waypoints" % len(self.recorded_waypoints)
 
+    # 目標速度と角速度の計算
+    # 角速度は、自車両から見た目標通過点のヨー角度にゲインをかけて計算
     def updata_cmd_vel(self):
 
         q = self.pose_info.orientation
@@ -94,7 +98,7 @@ class playRecordedWaypoint:
 
         print map_yaw,vehicle_yaw,div_yaw,div_yaw_mod,self.index
 
-        self.send_cmd_vel.linear.x = 0.8
+        self.send_cmd_vel.linear.x = TARGET_VEL
         self.send_cmd_vel.angular.z = div_yaw_mod * P_GAIN
 
     def calculate_and_publish_cmd_vel(self):

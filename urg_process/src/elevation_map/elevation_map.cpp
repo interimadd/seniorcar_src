@@ -50,15 +50,15 @@ void ElevationMap::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 		if( 0 <= num_x && num_x < MAP_SIZE_X * 2 ){
 			num_y = int( float(MAP_SIZE_Y) + ( laser_point_data.points[i].y - center_y ) / HORIZONTAL_RESOLUTION );
 			if( 0 <= num_y && num_y < MAP_SIZE_Y * 2 ){
-				//if( -0.2 < laser_point_data.points[i].z && laser_point_data.points[i].z < 0.5){
+				if( -1.5 < laser_point_data.points[i].z && laser_point_data.points[i].z < 0.5){
 					variance_map[num_x][num_y][1] += 1; //n
 					variance_map[num_x][num_y][2] += pow( laser_point_data.points[i].z , 2) ;
 					variance_map[num_x][num_y][3] += laser_point_data.points[i].z ;
 					if( variance_map[num_x][num_y][1] > 1 ){
 						variance_map[num_x][num_y][0] = (variance_map[num_x][num_y][2] - pow(variance_map[num_x][num_y][3],2)/variance_map[num_x][num_y][1] ) / (variance_map[num_x][num_y][1] - 1);
 					}
-				//}
 				height_map[num_x][num_y] = laser_point_data.points[i].z;
+				}
 			}
 		}
 	}
@@ -115,7 +115,16 @@ void ElevationMap::TypeMapToPointCloud(sensor_msgs::PointCloud *road,sensor_msgs
 				else if( VEGETATION_THRESHOLD_MIN <= variance_map[i][j][0] && variance_map[i][j][0] < VEGETATION_THRESHOLD_MAX){
 					grass->points.push_back(push_point);
 				}
+				/*
 				else{
+					others->points.push_back(push_point);
+				}
+				*/
+			}
+			else{
+				if( variance_map[i][j][1] > 0){
+					geometry_msgs::Point32 push_point = TranslateIndexToRealCordinate(i,j);
+					push_point.z = variance_map[i][j][3] / variance_map[i][j][1];
 					others->points.push_back(push_point);
 				}
 			}
@@ -192,16 +201,61 @@ void ElevationMap::MoveHeightMapCenter(float pos_x,float pos_y){
 }
 
 
-void ElevationMap::InterpolateMap(){
+void ElevationMap::printElevationMapData(){
 
-	float height_sum = 0;
-	float sum_num = 0;
+	cout << "print start" << endl;
+
+	for(int i=0 ; i < MAP_SIZE_X * 2 ; i++){
+		for(int j=0 ; j < MAP_SIZE_Y * 2 ;j++){
+			if(variance_map[i][j][1]>1){
+				geometry_msgs::Point32 tmp_point = TranslateIndexToRealCordinate(i,j);
+				cout << "cordinate:" << tmp_point.x << "," << tmp_point.y << "," << tmp_point.z << ",";
+				cout << "variance_map:" << variance_map[i][j][0] << "," << variance_map[i][j][1] << "," << variance_map[i][j][3] / variance_map[i][j][1] << endl;
+			}
+		}
+	}
+
+	cout << endl;
+
+}
+
+
+void ElevationMap::InterpolateMap(){
 	
 	for(int i=2 ; i < MAP_SIZE_X * 2 - 2 ; i++){
 		for(int j=2 ; j < MAP_SIZE_Y * 2 - 2 ;j++){
 
+			float height_sum = 0;
+			float sum_num = 0;
+			interpolated_height_map[i][j] = NOT_DETECT;
+
+			if(variance_map[i][j][1] > 2 && variance_map[i][j][0] < VEGETATION_THRESHOLD_MIN){
+				// 草地でない判定がされた場合は計測値の平均値を路面高さとする
+				interpolated_height_map[i][j] = variance_map[i][j][3] / variance_map[i][j][1];				
+			}
+			else{
+				for(int n=-1;n<=1;n++){
+					for(int m=-1;m<=1;m++){
+						if(variance_map[i+n][j+m][1] > 2 && variance_map[i+n][j+m][0] < VEGETATION_THRESHOLD_MIN){
+							sum_num += 1;
+							height_sum += variance_map[i+n][j+m][3] / variance_map[i+n][j+m][1] ;
+						}
+					}
+				}
+				if(sum_num>3){
+					interpolated_height_map[i][j] = height_sum / sum_num;
+				}
+			}
+
+		}
+	}
+}
+
+			/*
+
 			height_sum = 0 ;
 			sum_num = 0 ;
+
 			for(int n=-1;n<=1;n++){
 				for(int m=-1;m<=1;m++){
 					if(height_map[i+n][j+m] != NOT_DETECT){
@@ -210,10 +264,11 @@ void ElevationMap::InterpolateMap(){
 					}
 				}
 			}
+
 			height_sum = height_sum / sum_num ;
 
 			if(height_map[i][j] == NOT_DETECT){
-				if(sum_num>2){
+				if(sum_num>9){
 					interpolated_height_map[i][j] = height_sum;
 				}
 				else{
@@ -230,6 +285,7 @@ void ElevationMap::InterpolateMap(){
 					interpolated_height_map[i][j] = height_map[i][j] ;
 				}
 			}
+			*/
 
 			/*
 			if(height_map[i][j] == NOT_DETECT){
@@ -254,19 +310,5 @@ void ElevationMap::InterpolateMap(){
 				interpolated_height_map[i][j] = height_map[i][j];
 			}
 			*/
-		
-		}
-	}
-
-
-	/*
-	for(int i=2 ; i < MAP_SIZE_X * 2 - 2 ; i++){
-		for(int j=2 ; j < MAP_SIZE_Y * 2 - 2 ;j++){
-			interpolated_height_map[i][j] = height_map[i][j];
-		}
-	}
-	*/
-
-}
 
 

@@ -217,42 +217,43 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          odom:
-            base_link:
-              base:
-                back_up:
-                  {}
-                back_up2:
-                  {}
-                back_up3:
-                  {}
-                front_up:
-                  {}
-                front_up2:
-                  {}
-                front_up3:
-                  {}
-                wheel_back_left:
-                  {}
-                wheel_back_right:
-                  {}
-                wheel_front_left:
-                  {}
-                wheel_front_right:
-                  {}
-              laser_back:
+          {}
+        odom:
+          base_link:
+            base:
+              back_up:
                 {}
-              laser_front:
+              back_up2:
                 {}
-              laser_tilt:
+              back_up3:
                 {}
-              velodyne:
+              front_up:
                 {}
-            imu:
+              front_up2:
+                {}
+              front_up3:
+                {}
+              wheel_back_left:
+                {}
+              wheel_back_right:
+                {}
+              wheel_front_left:
+                {}
+              wheel_front_right:
+                {}
+            laser_back:
               {}
+            laser_front:
+              {}
+            laser_tilt:
+              {}
+            velodyne:
+              {}
+          imu:
+            {}
       Update Interval: 0
       Value: true
-    - Alpha: 1
+    - Alpha: 0.2
       Class: rviz/RobotModel
       Collision Enabled: false
       Enabled: true
@@ -478,7 +479,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 0
+      Angle: -1.62
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
@@ -487,7 +488,7 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 10
+      Scale: 34.5976
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: 0

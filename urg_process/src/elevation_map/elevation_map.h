@@ -11,7 +11,8 @@ using namespace std;
 
 const float NOT_DETECT = -100.0;
 const float VEGETATION_THRESHOLD_MIN = 0.0005;
-const float VEGETATION_THRESHOLD_MAX = 0.01;
+//const float VEGETATION_THRESHOLD_MIN = 0.0001;
+const float VEGETATION_THRESHOLD_MAX = 10.01;
 
 class ElevationMap{
 
@@ -64,6 +65,11 @@ class ElevationMap{
 			配列の番号から実世界座標に変換するのに使う
 		*/
 		geometry_msgs::Point32 TranslateIndexToRealCordinate(int x_index,int y_index);
+
+		/*
+			Elevation Map内のデータをプリント出力 デバッグ用
+		*/
+		void printElevationMapData();
 
 };
 

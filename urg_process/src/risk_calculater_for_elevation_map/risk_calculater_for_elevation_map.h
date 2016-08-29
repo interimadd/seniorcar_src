@@ -14,10 +14,10 @@
 /*
 	各種パラメータ
 */
-const float CALCULATE_TIME_STEP = 0.02;	// 何秒刻みの評価をするのか
+const float CALCULATE_TIME_STEP = 0.1;	// 何秒刻みの評価をするのか
 const float CALCULATE_TIME_LENGTH = 3;	// 何秒後までの未来を評価するのか
 const float CALCULATE_STEER_DEG_STEP = 5.0;	// 操舵角度何度ごとに計算を行うか
-const float MAX_STEER_DEG_CHANGE = 30.0;		// 今の操舵角度から何度変化するところまで計算するか
+const float MAX_STEER_DEG_CHANGE = 20.0;		// 今の操舵角度から何度変化するところまで計算するか
 
 const int PATH_POINT_NUM =   int( CALCULATE_TIME_LENGTH / CALCULATE_TIME_STEP ) + 1;	// 1つの経路を何個の点で表現するか
 const int DEG_CALCULTE_NUM = int( MAX_STEER_DEG_CHANGE * 2.0 / CALCULATE_STEER_DEG_STEP ) + 1;	// 何個の経路を生成するか
