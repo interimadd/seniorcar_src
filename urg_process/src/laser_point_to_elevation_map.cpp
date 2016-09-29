@@ -60,7 +60,8 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
   }
   */
   if( pow(elevation_map.center_x-transform.getOrigin().x(),2) + pow(elevation_map.center_y-transform.getOrigin().y(),2) > 1.0 ){
-    elevation_map.MoveHeightMapCenter(transform.getOrigin().x(), transform.getOrigin().y());
+    //elevation_map.MoveHeightMapCenter(transform.getOrigin().x(), transform.getOrigin().y());
+    elevation_map.inputElevationMapFromTextFile(transform.getOrigin().x(), transform.getOrigin().y());
     //printf("%f,%f,%f\n",transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
   }
 

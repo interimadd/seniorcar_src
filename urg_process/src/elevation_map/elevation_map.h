@@ -4,6 +4,13 @@
 #include <stdint.h>
 #include <vector>
 #include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+#include <sys/types.h>
+#include <dirent.h>
 #include "sensor_msgs/PointCloud.h"
 #include "geometry_msgs/Point.h"
 
@@ -13,6 +20,8 @@ const float NOT_DETECT = -100.0;
 const float VEGETATION_THRESHOLD_MIN = 0.0005;
 //const float VEGETATION_THRESHOLD_MIN = 0.0001;
 const float VEGETATION_THRESHOLD_MAX = 10.01;
+
+const string MAP_TEXT_DIR = "/home/ishikawa/elevation_map_data/";
 
 class ElevationMap{
 
@@ -70,6 +79,15 @@ class ElevationMap{
 			Elevation Map内のデータをプリント出力 デバッグ用
 		*/
 		void printElevationMapData();
+
+		/*
+			Elevation Mapのデータをテキストファイルに出力
+		*/
+		void outputElevationMapToTextFile();
+		void inputElevationMapFromTextFile(float pos_x,float pos_y);
+
+		void getElevationMapFilePos();
+		vector<int> map_pos_list;
 
 };
 

@@ -40,14 +40,14 @@ class CANUSB_Connecter:
 
 		# CANUSBのCANポートを開くコマンド
 		# 改行コマンド×複数回→通信速度設定→ポートオープン
-		time.sleep(0.5)
+		time.sleep(0.1)
 		self.ser.write("\r")
 		self.ser.write("\r")
-		time.sleep(0.5)
+		time.sleep(0.1)
 		self.ser.write("C\r")
-		time.sleep(0.5)
+		time.sleep(0.1)
 		self.ser.write("S6\r")
-		time.sleep(0.5)
+		time.sleep(0.1)
 		self.ser.write("O\r")
 
 		print "can open"

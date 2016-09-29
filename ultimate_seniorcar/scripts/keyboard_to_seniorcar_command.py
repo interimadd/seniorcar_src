@@ -14,7 +14,7 @@ SPACE = 32
 
 OUT_VOL = [1,2,3,4]
 
-ANGLE_INCLIMENT = 5.0
+ANGLE_INCLIMENT = 10.0
 
 class CalculateVoltage:
 

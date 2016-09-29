@@ -37,6 +37,8 @@ ElevationMap::ElevationMap(float pos_x,float pos_y,int map_size_x,int map_size_y
 		}
 	}
 
+	getElevationMapFilePos();
+
 }
 
 
@@ -195,6 +197,8 @@ void ElevationMap::MoveHeightMapCenter(float pos_x,float pos_y){
 		}
 	}
 
+	outputElevationMapToTextFile();
+
 	center_x = pos_x;
 	center_y = pos_y;
 
@@ -312,3 +316,110 @@ void ElevationMap::InterpolateMap(){
 			*/
 
 
+void ElevationMap::outputElevationMapToTextFile(){
+
+	stringstream filename;
+	filename << MAP_TEXT_DIR << "x" << int(center_x) << "y" << int(center_y) << ".csv";
+	ofstream output_file;
+	output_file.open(filename.str().c_str(),ios::out);
+
+	output_file << center_x << "," << center_y << "," << MAP_SIZE_X << "," << MAP_SIZE_Y << "," << HORIZONTAL_RESOLUTION << endl;
+
+	for(int i=0 ; i < MAP_SIZE_X * 2 ; i++){
+		for(int j=0 ; j < MAP_SIZE_Y * 2 ;j++){
+			output_file << variance_map[i][j][0] << "," << variance_map[i][j][1] << "," << variance_map[i][j][2] << "," << variance_map[i][j][3] << endl; 
+		}
+	}
+
+	output_file.close();
+
+	cout << "record map " << filename.str() << endl;
+
+}
+
+
+void ElevationMap::inputElevationMapFromTextFile(float pos_x,float pos_y){
+
+	for(int i=0 ; i < MAP_SIZE_X * 2 ; i++){
+		for(int j=0 ; j < MAP_SIZE_Y * 2 ;j++){
+			variance_map[i][j][0] = 0.0 ;
+			variance_map[i][j][1] = 0.0 ;
+			variance_map[i][j][2] = 0.0 ;
+			variance_map[i][j][3] = 0.0 ;
+		}
+	}
+
+	float min_pos = 10000;
+	int min_distance_index = 0;
+	for(int i = 0;i < map_pos_list.size() ;i+=2){
+		float tmp_pos = pow( pos_x - map_pos_list[i] , 2) + pow( pos_y - map_pos_list[i+1] , 2);
+		if( min_pos > tmp_pos){
+			min_pos = tmp_pos;
+			min_distance_index = i;
+		}
+	}
+
+	stringstream filename;
+	filename << MAP_TEXT_DIR << "x" << map_pos_list[min_distance_index] << "y" << map_pos_list[min_distance_index + 1] << ".csv";
+	cout << "open " << filename.str() << endl;
+
+	
+	FILE *fp;
+	fp = fopen(filename.str().c_str(), "r");
+
+	double file_center_x , file_center_y , file_MAP_SIZE_X , file_MAP_SIZE_Y , file_HORIZONTAL_RESOLUTION;
+	fscanf(fp, "%lf,%lf,%lf,%lf,%lf", &file_center_x , &file_center_y , &file_MAP_SIZE_X , &file_MAP_SIZE_Y , &file_HORIZONTAL_RESOLUTION);
+
+	center_x = file_center_x;
+	center_y = file_center_y;
+
+	// ゲインファイル内の数字をGainForStand[番号][配列のサイズ]配列内に格納
+	int index = 0;
+	double v0,v1,v2,v3;
+	while (fscanf(fp, "%lf,%lf,%lf,%lf", &v0 , &v1 , &v2 ,&v3) != EOF){
+
+		int i = index / int(file_MAP_SIZE_X*2);
+		int j = index % int(file_MAP_SIZE_Y*2);
+
+		variance_map[i][j][0] = v0;
+		variance_map[i][j][1] = v1;
+		variance_map[i][j][2] = v2;
+		variance_map[i][j][3] = v3;
+
+		height_map[i][j] = v3 / v1;
+
+		index++;
+	}
+
+	fclose(fp);
+
+}
+
+void ElevationMap::getElevationMapFilePos(){
+
+	struct dirent* dent;
+	DIR* dp = opendir(MAP_TEXT_DIR.c_str());
+
+	if(dp!=NULL){
+		do{
+			dent = readdir(dp);
+			if(dent!=NULL){
+				string filename(dent->d_name);
+				if(filename.find(".csv") != string::npos){
+					cout << dent->d_name << endl;
+					size_t pos_y = filename.find("y");
+					size_t pos_dot = filename.find(".");
+					if( pos_y != string::npos && pos_dot != string::npos){
+						int x_value = atoi(filename.substr(1,pos_y-1).c_str());
+						int y_value = atoi(filename.substr(pos_y+1, pos_dot - pos_y - 1).c_str());
+						cout << x_value << "," << y_value << endl;
+						map_pos_list.push_back(x_value);
+						map_pos_list.push_back(y_value);
+					}
+				}
+			}
+		}while( dent != NULL );
+	}
+	closedir(dp);
+
+}
