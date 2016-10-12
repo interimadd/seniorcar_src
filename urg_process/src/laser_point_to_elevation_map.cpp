@@ -1,15 +1,19 @@
 #include "laser_point_to_elevation_map.h"
 
 int i = 0;
-
+float last_calc_x = -100;
+float last_calc_y = -100;
+ 
 void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
 
 	tf::StampedTransform transform;
   tf::StampedTransform transform_vehicle_front;
+  tf::StampedTransform transform_read_map_center;
 	
 	try{
       listener->lookupTransform("/odom","/map_center",ros::Time(0), transform);
       listener->lookupTransform("/odom","/laser_front",ros::Time(0), transform_vehicle_front);
+      listener->lookupTransform("/odom","/read_map_center",ros::Time(0), transform_read_map_center);
     }
     catch (tf::TransformException ex){
       ROS_ERROR("%s",ex.what());
@@ -61,8 +65,14 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
   */
   if( pow(elevation_map.center_x-transform.getOrigin().x(),2) + pow(elevation_map.center_y-transform.getOrigin().y(),2) > 1.0 ){
     //elevation_map.MoveHeightMapCenter(transform.getOrigin().x(), transform.getOrigin().y());
-    elevation_map.inputElevationMapFromTextFile(transform.getOrigin().x(), transform.getOrigin().y());
+    //elevation_map.outputElevationMapToTextFile();
     //printf("%f,%f,%f\n",transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
+  }
+
+  if( pow(last_calc_x - transform_vehicle_front.getOrigin().x(),2) + pow(last_calc_y - transform_vehicle_front.getOrigin().y(),2) > 1.0 ){
+    elevation_map.inputElevationMapFromTextFile(transform_read_map_center.getOrigin().x(), transform_read_map_center.getOrigin().y());
+    last_calc_x = transform_vehicle_front.getOrigin().x();
+    last_calc_y = transform_vehicle_front.getOrigin().y();
   }
 
 

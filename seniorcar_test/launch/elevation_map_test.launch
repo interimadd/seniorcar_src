@@ -7,7 +7,8 @@
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_front" args="1.06 0.0 0.27 0.0 0.0 0.0 /base_link /laser_front 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.53 0.0 0.55 0.0 /base_link /laser_tilt 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_back" args="-0.16 0.0 0.27 3.14 0.0 0.0 /base_link /laser_back 40" />
-	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="1.0 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="3.0 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_read_map_center" args="5.0 0.0 0.0 0.0 0.0 0.0 /base_link /read_map_center 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_imu" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /imu 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 0.6 0.0 0.0 0.0 /base_link /velodyne 40" />
 	<node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom"/>

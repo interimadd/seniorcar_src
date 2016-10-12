@@ -23,7 +23,7 @@ ros::Time start_time;
 ultimate_seniorcar::SeniorcarState now_state;
 nav_msgs::Odometry now_odom;
 
-RiskCalculater elevation_map(0,0,100,100,0.1);
+RiskCalculater elevation_map(0,0,100,100,0.05);
 
 void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg);
 void SeniorcarStateCallback(const ultimate_seniorcar::SeniorcarState& msg);

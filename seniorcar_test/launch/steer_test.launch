@@ -1,7 +1,7 @@
 <launch>
 
-	<arg name="steer_motor_port"   value="/dev/ttyUSB2" />
-	<arg name="canusb_port" value="/dev/ttyUSB1" />
+	<arg name="steer_motor_port"   value="/dev/ttyUSB3" />
+	<arg name="canusb_port" value="/dev/ttyUSB2" />
 
 	<!-- 各種センサへの接続 -->
 	<param name="canusb_port" value="$(arg canusb_port)"/>

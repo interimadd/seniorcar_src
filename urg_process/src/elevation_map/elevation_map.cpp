@@ -52,14 +52,20 @@ void ElevationMap::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 		if( 0 <= num_x && num_x < MAP_SIZE_X * 2 ){
 			num_y = int( float(MAP_SIZE_Y) + ( laser_point_data.points[i].y - center_y ) / HORIZONTAL_RESOLUTION );
 			if( 0 <= num_y && num_y < MAP_SIZE_Y * 2 ){
-				if( -1.5 < laser_point_data.points[i].z && laser_point_data.points[i].z < 0.5){
+				if( -1.0 < laser_point_data.points[i].z && laser_point_data.points[i].z < 0.5){
 					variance_map[num_x][num_y][1] += 1; //n
 					variance_map[num_x][num_y][2] += pow( laser_point_data.points[i].z , 2) ;
 					variance_map[num_x][num_y][3] += laser_point_data.points[i].z ;
 					if( variance_map[num_x][num_y][1] > 1 ){
 						variance_map[num_x][num_y][0] = (variance_map[num_x][num_y][2] - pow(variance_map[num_x][num_y][3],2)/variance_map[num_x][num_y][1] ) / (variance_map[num_x][num_y][1] - 1);
 					}
-				height_map[num_x][num_y] = laser_point_data.points[i].z;
+				//height_map[num_x][num_y] = laser_point_data.points[i].z;
+					if(height_map[num_x][num_y] == NOT_DETECT){
+						height_map[num_x][num_y] = laser_point_data.points[i].z;
+					}
+					else if( height_map[num_x][num_y] > laser_point_data.points[i].z){
+						height_map[num_x][num_y] = laser_point_data.points[i].z;
+					}
 				}
 			}
 		}
@@ -115,7 +121,8 @@ void ElevationMap::TypeMapToPointCloud(sensor_msgs::PointCloud *road,sensor_msgs
 					road->points.push_back(push_point);
 				}
 				else if( VEGETATION_THRESHOLD_MIN <= variance_map[i][j][0] && variance_map[i][j][0] < VEGETATION_THRESHOLD_MAX){
-					grass->points.push_back(push_point);
+					//grass->points.push_back(push_point);
+					road->points.push_back(push_point);
 				}
 				/*
 				else{
@@ -197,8 +204,6 @@ void ElevationMap::MoveHeightMapCenter(float pos_x,float pos_y){
 		}
 	}
 
-	outputElevationMapToTextFile();
-
 	center_x = pos_x;
 	center_y = pos_y;
 
@@ -233,6 +238,7 @@ void ElevationMap::InterpolateMap(){
 			float sum_num = 0;
 			interpolated_height_map[i][j] = NOT_DETECT;
 
+			/*
 			if(variance_map[i][j][1] > 2 && variance_map[i][j][0] < VEGETATION_THRESHOLD_MIN){
 				// 草地でない判定がされた場合は計測値の平均値を路面高さとする
 				interpolated_height_map[i][j] = variance_map[i][j][3] / variance_map[i][j][1];				
@@ -250,12 +256,7 @@ void ElevationMap::InterpolateMap(){
 					interpolated_height_map[i][j] = height_sum / sum_num;
 				}
 			}
-
-		}
-	}
-}
-
-			/*
+			*/
 
 			height_sum = 0 ;
 			sum_num = 0 ;
@@ -272,7 +273,7 @@ void ElevationMap::InterpolateMap(){
 			height_sum = height_sum / sum_num ;
 
 			if(height_map[i][j] == NOT_DETECT){
-				if(sum_num>9){
+				if(sum_num>3){
 					interpolated_height_map[i][j] = height_sum;
 				}
 				else{
@@ -289,7 +290,7 @@ void ElevationMap::InterpolateMap(){
 					interpolated_height_map[i][j] = height_map[i][j] ;
 				}
 			}
-			*/
+			
 
 			/*
 			if(height_map[i][j] == NOT_DETECT){
@@ -315,6 +316,12 @@ void ElevationMap::InterpolateMap(){
 			}
 			*/
 
+		}
+	}
+}
+
+			
+
 
 void ElevationMap::outputElevationMapToTextFile(){
 
@@ -327,7 +334,7 @@ void ElevationMap::outputElevationMapToTextFile(){
 
 	for(int i=0 ; i < MAP_SIZE_X * 2 ; i++){
 		for(int j=0 ; j < MAP_SIZE_Y * 2 ;j++){
-			output_file << variance_map[i][j][0] << "," << variance_map[i][j][1] << "," << variance_map[i][j][2] << "," << variance_map[i][j][3] << endl; 
+			output_file << variance_map[i][j][0] << "," << variance_map[i][j][1] << "," << variance_map[i][j][2] << "," << variance_map[i][j][3] << "," << height_map[i][j] << endl; 
 		}
 	}
 
@@ -375,8 +382,8 @@ void ElevationMap::inputElevationMapFromTextFile(float pos_x,float pos_y){
 
 	// ゲインファイル内の数字をGainForStand[番号][配列のサイズ]配列内に格納
 	int index = 0;
-	double v0,v1,v2,v3;
-	while (fscanf(fp, "%lf,%lf,%lf,%lf", &v0 , &v1 , &v2 ,&v3) != EOF){
+	double v0,v1,v2,v3, elev_map;
+	while (fscanf(fp, "%lf,%lf,%lf,%lf,%lf", &v0 , &v1 , &v2 ,&v3 ,&elev_map) != EOF){
 
 		int i = index / int(file_MAP_SIZE_X*2);
 		int j = index % int(file_MAP_SIZE_Y*2);
@@ -386,7 +393,8 @@ void ElevationMap::inputElevationMapFromTextFile(float pos_x,float pos_y){
 		variance_map[i][j][2] = v2;
 		variance_map[i][j][3] = v3;
 
-		height_map[i][j] = v3 / v1;
+		//height_map[i][j] = v3 / v1;
+		height_map[i][j] = elev_map;
 
 		index++;
 	}
