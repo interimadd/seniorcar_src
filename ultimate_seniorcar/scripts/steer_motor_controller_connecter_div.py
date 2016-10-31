@@ -45,7 +45,7 @@ def connect_with_arduino():
 		sys.exit()
 
 	time.sleep(2)
-	rate = rospy.Rate(20)
+	rate = rospy.Rate(100)
 
 	count = 0
 	while count < 4:
@@ -53,15 +53,16 @@ def connect_with_arduino():
 		send_zero_to_steer_motor(ser)
 		rate.sleep()
 
-	time.sleep(1)
+	print "Did You Turn On a Motor Switch??"
 
 	while  not rospy.is_shutdown():
 		ser.write("NP\n")
 		while ser.inWaiting() > 0:
 			if ser.read() == "p":
+				send_devision_to_steer_motor(ser)				
 				pub_str.data = send_str[:-1]
 				pub.publish(pub_str)
-				send_devision_to_steer_motor(ser)
+
 		rate.sleep()
 
 	ser.close()

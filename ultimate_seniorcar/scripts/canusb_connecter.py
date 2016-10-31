@@ -26,7 +26,7 @@ class CANUSB_Connecter:
 	def connect_with_canusb(self):
 
 		# •∑•Í•¢•ÎÕ®–≈È_ º
-		port = rospy.get_param('canusb_port',"/dev/ttyUSB0")
+		port = rospy.get_param('canusb_port',"/dev/ttyUSB1")
 		print port
 		try:
 			self.ser = serial.Serial(port,9600)
@@ -153,7 +153,7 @@ class CANUSB_Connecter:
 
 		rospy.Subscriber("seniorcar_command", SeniorcarState, self.command_recive)
 
-		rate = rospy.Rate(50)
+		rate = rospy.Rate(100)
 		while not rospy.is_shutdown():
 			self.update_vehicle_data()
 			self.pub.publish(self.seniorcar_state)

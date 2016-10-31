@@ -1,0 +1,7 @@
+<launch>
+
+	<include file="$(find seniorcar_gazebo_simulater)/launch/turtlebot.launch"/>
+	<include file="$(find turtlebot_teleop)/launch/keyboard_teleop.launch"/>
+	<include file="$(find turtlebot_rviz_launchers)/launch/view_robot.launch"/>
+
+</launch>

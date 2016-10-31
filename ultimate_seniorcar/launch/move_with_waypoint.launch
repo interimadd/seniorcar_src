@@ -2,15 +2,15 @@
 
 	<!-- USBポート番号の定義 -->
 	
-	<arg name="frontLRF_port"      value="/dev/ttyACM4"/>
-    <arg name="front_tiltLRF_port" value="/dev/ttyACM2"/>
-    <arg name="backLRF_port"       value="/dev/ttyACM3"/>
+	<arg name="frontLRF_port"      value="/dev/ttyACM3"/>
+    <arg name="front_tiltLRF_port" value="/dev/ttyACM1"/>
+    <arg name="backLRF_port"       value="/dev/ttyACM2"/>
     <arg name="imu_port"           value="/dev/ttyACM0"/>
-    <arg name="steer_motor_port"   value="/dev/ttyACM1"/>
-    <arg name="canusb_port"        value="/dev/ttyUSB0"/>
+    <arg name="steer_motor_port"   value="/dev/ttyUSB0"/>
+    <arg name="canusb_port"        value="/dev/ttyUSB1"/>
 
-    <arg name="map_path"           value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/long_guruguru_map.yaml"/>
-    <param name="waypoint_file_path" value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/long_guruguru_waypoint.txt"/>
+    <arg name="map_path"           value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/guruguru_map.yaml"/>
+    <param name="waypoint_file_path" value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/guruguru_waypoint.txt"/>
 
 	<!-- 各種センサへの接続 -->
     <!--
@@ -40,7 +40,7 @@
     </include>
 
     
-    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel.xml">
+    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel _with_ver2.xml">
         <arg name="steer_motor_port" value="$(arg steer_motor_port)"/>
     </include>
 

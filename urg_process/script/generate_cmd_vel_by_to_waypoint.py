@@ -15,7 +15,7 @@ from tf.transformations import euler_from_quaternion
 
 APPRORCH_THRESHOLD = 3.0    # 何mまで近づいたら次の点を指示するか
 P_GAIN = 1.0                # 偏差に対してどれだけの目標角速度値を出力するか
-TARGET_VEL = 1.5            # デフォルトの直進速度値
+TARGET_VEL = 0.8            # デフォルトの直進速度値
 
 class playRecordedWaypoint:
 

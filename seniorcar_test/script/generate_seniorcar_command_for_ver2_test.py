@@ -1,16 +1,20 @@
 #!/usr/bin/env python
 # coding: UTF-8
 
+#sin波を生成する
+
 import rospy
 from geometry_msgs.msg import Twist
 from ultimate_seniorcar.msg import SeniorcarState
 import numpy
+import math
 
 
-PROCESSING_RATE = 5.0
-PROCESS_TIME = 120.5
+PROCESSING_RATE = 50.0
+CYCLE_TIME = 10
+CYCLE_NUM  = 4
 
-STEER_ANGLE_DEG = 5
+MAX_STEER_ANGLE_DEG = 10
 
 if __name__ == '__main__':
 
@@ -21,18 +25,11 @@ if __name__ == '__main__':
 	pub_command = SeniorcarState()
 
 	count = 0
+	passed_time = 0
 
-	while not rospy.is_shutdown() and count / PROCESSING_RATE < PROCESS_TIME:
+	while not rospy.is_shutdown() and passed_time < CYCLE_TIME * CYCLE_NUM :
 
-		case = int(count/PROCESSING_RATE)%4
-
-		if case == 0 or case == 2:
-			pub_command.steer_angle = 0
-		elif case == 1:
-			pub_command.steer_angle = STEER_ANGLE_DEG
-		elif case == 3:
-			pub_command.steer_angle = -STEER_ANGLE_DEG
-
+		pub_command.steer_angle = MAX_STEER_ANGLE_DEG * math.sin( 2.0 * math.pi * passed_time / CYCLE_TIME)
 		pub.publish(pub_command)
-		count += 1
+		passed_time += 1 / PROCESSING_RATE
 		rate.sleep()

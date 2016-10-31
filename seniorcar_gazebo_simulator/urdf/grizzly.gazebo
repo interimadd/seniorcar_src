@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<robot>
+  <gazebo>
+    <plugin name="grizzly_diff_controller"
+            filename="libgrizzly_gazebo_plugins.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100.0</updateRate>
+      <rearLeftJoint>joint_rear_left_wheel</rearLeftJoint>
+      <rearRightJoint>joint_rear_right_wheel</rearRightJoint>
+      <frontLeftJoint>joint_front_left_wheel</frontLeftJoint>
+      <frontRightJoint>joint_front_right_wheel</frontRightJoint>
+      <frontAxleJoint>front_axle_joint</frontAxleJoint>
+      <wheelSeparation>${base_y_origin_to_wheel_origin*2}</wheelSeparation>
+      <wheelDiameter>${wheel_radius*2.0}</wheelDiameter>
+      <torque>1000</torque>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="gps_controller" filename="libhector_gazebo_ros_gps.so">
+      <updateRate>10</updateRate>
+      <robotNamespace>/</robotNamespace>
+      <bodyName>navsat_link</bodyName>
+      <frameId>navsat_link</frameId>
+      <topicName>/navsat/fix</topicName>
+      <velocityTopicName>/navsat/vel</velocityTopicName>
+      <referenceLatitude>43.45</referenceLatitude>
+      <referenceLongitude>-80.48</referenceLongitude>
+      <referenceHeading>0</referenceHeading>
+      <referenceAltitude>0</referenceAltitude>
+      <drift>0.0001 0.0001 0.0001</drift>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
+      <robotNamespace>/</robotNamespace>
+      <updateRate>50.0</updateRate> 
+      <bodyName>imu_link</bodyName>
+      <frameId>base_link</frameId>
+      <topicName>imu/data_compass</topicName>
+      <accelDrift>0.005 0.005 0.005</accelDrift>
+      <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
+      <rateDrift>0.005 0.005 0.005 </rateDrift>
+      <rateGaussianNoise>0.005 0.005 0.005 </rateGaussianNoise>
+      <headingDrift>0.005</headingDrift>
+      <headingGaussianNoise>0.005</headingGaussianNoise>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="base_link">
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <gazebo reference="chassis_link">
+    <material>Gazebo/DarkGrey</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <gazebo reference="front_axle_link">
+    <material>Gazebo/DarkGrey</material>
+    <turnGravityOff>false</turnGravityOff>
+  </gazebo>
+
+  <gazebo reference="fenders_link">
+    <material>Gazebo/Yellow</material>
+  </gazebo>
+
+  <gazebo reference="imu_link"/>
+  <gazebo reference="navsat_link"/>
+
+
+  <!-- Depth Sensor Original -->
+    <gazebo reference="pico_flexx_link">
+    <sensor type="depth" name="pico_flexx_ir_sensor">
+      <always_on>true</always_on>
+      <update_rate>1.0</update_rate>
+      <camera>
+        <horizontal_fov>${57.0*M_PI/180.0}</horizontal_fov>
+        <image>
+          <format>L8</format>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.5</near>
+          <far>10.0</far>
+        </clip>
+      </camera>
+ 
+      <plugin name="pico_flexx_link_controller" filename="libgazebo_ros_openni_kinect.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>1.0</updateRate>
+        <cameraName>pico_flexx_link_ir</cameraName>
+        <depthImageTopicName>/pico_flexx_link/depth_registered/image_raw</depthImageTopicName>
+        <depthImageCameraInfoTopicName>/pico_flexx_link/depth/camera_info</depthImageCameraInfoTopicName>
+        <pointCloudTopicName>/pico_flexx_link/points</pointCloudTopicName>
+        <frameName>pico_flexx_depth_frame</frameName>
+        <pointCloudCutoff>0.5</pointCloudCutoff>
+        <distortionK1>0.00000001</distortionK1>
+        <distortionK2>0.00000001</distortionK2>
+        <distortionK3>0.00000001</distortionK3>
+        <distortionT1>0.00000001</distortionT1>
+        <distortionT2>0.00000001</distortionT2>
+      </plugin>
+    </sensor>
+    <material value="Gazebo/Blue" />
+  </gazebo>
+
+
+ <!-- Original LF -->
+   <!-- hokuyo -->
+  <gazebo reference="hokuyo_link">
+    <sensor type="ray" name="head_hokuyo_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise parameters based on published spec for Hokuyo laser
+               achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+               stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+               reading. -->
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>/scan</topicName>
+        <frameName>hokuyo_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+
+
+  <!-- Velodyne Original -->
+  
+  <gazebo reference="velodyne_link">
+  <sensor name="sensor_ray" type="ray">
+    <pose>0.0 0.0 0.0 0.0 0.0 0.0</pose>
+    <ray>
+        <scan display="true">
+            <horizontal>
+                <samples>300</samples>
+                <resolution>1.0</resolution>
+                <min_angle>-0.5236</min_angle>
+                <max_angle>0.5236</max_angle>
+            </horizontal>
+            <vertical>
+                <samples>100</samples>
+                <resolution>1.0</resolution>
+                <min_angle>-0.5236</min_angle>
+                <max_angle>0.5236</max_angle>
+            </vertical>
+        </scan>
+        <range>
+            <min>0.05</min>
+            <max>50.0</max>
+        </range>
+    </ray>
+    <plugin name="plugin_1" filename="libgazebo_ros_block_laser.so">
+        <gaussianNoise>0.00</gaussianNoise>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>20</updateRate>
+        <topicName>test_block_laser</topicName>
+        <frameName>velodyne_link</frameName>
+    </plugin>
+    <always_on>true</always_on>
+    <update_rate>10.0</update_rate>
+  -->
+  </sensor>
+</gazebo>
+
+
+
+</robot>

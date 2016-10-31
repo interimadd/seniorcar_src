@@ -4,3 +4,4 @@
 *.bin
 *~
 Makefile
+/Autoware_src/

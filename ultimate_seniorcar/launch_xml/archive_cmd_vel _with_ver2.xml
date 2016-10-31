@@ -1,6 +1,6 @@
 <launch>
 	<arg name="steer_motor_port"/>
 	<param name="steer_motor_port" value="$(arg steer_motor_port)" />
-	<node pkg="ultimate_seniorcar" type="steer_motor_controller_connecter.py" name="steer_motor_controller_connecter" output="screen"/>
+	<node pkg="ultimate_seniorcar" type="steer_motor_controller_connecter_div.py" name="steer_motor_controller_connecter_div" output="screen"/>
 	<node pkg="ultimate_seniorcar" type="cmd_vel_to_seniorcar_command.py" name="comand" output="screen"/>
 </launch>

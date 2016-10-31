@@ -6,7 +6,7 @@
 
 	<include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/0730_auto_guruguru_fail2.bag --delay=1 --clock"/>
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_firm_road/0322_exp07.bag --delay=1 --clock"/>
 	
 	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/map_and_seniorcar_visualize.rviz"/>
 

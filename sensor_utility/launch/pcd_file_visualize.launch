@@ -1,0 +1,7 @@
+<!-- -->
+<launch>
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/sensor_utility/launch_xml/pcd_file_visualize.rviz"/>
+  <node pkg="pcl_ros" type="pcd_to_pointcloud" name="pcd_to_pointcloud" args="/home/ishikawa/0.pcd" output="screen"/>
+  
+</launch>

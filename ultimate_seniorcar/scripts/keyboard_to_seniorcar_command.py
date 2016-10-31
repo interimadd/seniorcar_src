@@ -53,7 +53,7 @@ class CalculateVoltage:
 			self.seniorcar_command.accel_opening = 0
 
 	def calculate_and_publish_voltage(self):
-		rate = rospy.Rate(50)
+		rate = rospy.Rate(100)
 		while not rospy.is_shutdown():
 			self.pub.publish(self.seniorcar_command)
 			rate.sleep()

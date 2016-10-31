@@ -243,7 +243,7 @@ inline RotateEnable Height_Map::isEnableRolling(int x_index,int y_index){
 }
 
 
-inline float Height_Map::returnTireHeightInGrid(int x_index,int y_index){
+float Height_Map::returnTireHeightInGrid(int x_index,int y_index){
 
 	const float START_HEIGHT = -10.0;
 	float max_height = START_HEIGHT;
