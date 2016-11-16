@@ -29,9 +29,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 This program contains the description of the robot wheel model for Clearpath Grizzly
 -->
 <robot name="grizzly_wheel" xmlns:xacro="http://ros.org/wiki/xacro">
-  <property name="wheel_mass" value="15" />
+  <property name="wheel_mass" value="1" />
   <property name="wheel_radius" value="0.33" />
-  <property name="wheel_width" value="0.252" />
+  <property name="wheel_width" value="0.1" />
 
   <xacro:macro name="grizzly_wheel"
                params="fr lr parent translateX translateY flipY">
@@ -61,9 +61,9 @@ This program contains the description of the robot wheel model for Clearpath Gri
       </collision>
     </link>
     <gazebo reference="${fr}_${lr}_wheel">
-      <mu1 value="1.0" />
-      <mu2 value="1.0" />
-      <kp value="10000000.0" />
+      <mu1 value="0.7" />
+      <mu2 value="0.7" />
+      <kp value="1000000.0" />
       <kd value="1.0" />
       <fdir1 value="1 0 0" />
       <material>Gazebo/Grey</material>

@@ -6,7 +6,7 @@
 
   <!-- send table.xml to param server -->
   <arg name="range" default="2.5" />
-  <arg name="shift" default="0.1" />
+  <arg name="shift" default="0.25" />
   <arg name="use_openmp" default="false" />
 
   <!-- rosrun ndt_localizer ndt_mapping  -->
@@ -28,7 +28,6 @@
   <!--<node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom" output="screen"/>-->
 
   <!-- play bagfile -->
-  <node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_firm_road/filtered_0322_exp07.bag --delay=1 --clock --rate=1.2"/>
   <node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/ndt_map_visualize.rviz"/>
   
 </launch>

@@ -20,11 +20,11 @@ COV_MATRIX = [1e-3, 0.0, 0.0, 0.0, 0.0, 0.0,
               0.0, 0.0, 0.0, 0.0, 1e-6, 0.0, 
               0.0, 0.0, 0.0, 0.0, 0.0, 1e3]
 WHEEL_BASE = 0.9 # 車体のホイールベース
-STEEA_ANGLE_OFFSET = 1.0 # セニアカーのCAN情報を直接読み取ると何故か直進時に-1.0deg程度になるので、それを補正する用
+STEEA_ANGLE_OFFSET = 2.4 # セニアカーのCAN情報を直接読み取ると何故か直進時に-1.0deg程度になるので、それを補正する用 ＋がでかいと左に行く
 RIGHT_TURN_MAGNIFICATION = 1.04267 # 右旋回時に実際の値より1.05倍程度になることから補正
 LEFT_TURN_MAGNIFICATION  = 0.95674 # 左旋回時に実際の値より0.95倍程度になることから補正
 
-IMU_PITCH_DEFFULT_ANGLE = 1.0 * math.pi / 180.0
+IMU_PITCH_DEFFULT_ANGLE = 0.0 * math.pi / 180.0
 
 
 class OdometryCalculator:
@@ -62,8 +62,8 @@ class OdometryCalculator:
             data.vehicle_velocity = -1.0 * data.vehicle_velocity
 
         data.steer_angle += STEEA_ANGLE_OFFSET
-        if abs(data.steer_angle) < 2.0:
-            data.steer_angle = 0
+        #if abs(data.steer_angle) < 0.0:
+        #    data.steer_angle = 0
  
         v = data.vehicle_velocity
         w = data.vehicle_velocity * math.tan(data.steer_angle*math.pi/180.0) / WHEEL_BASE

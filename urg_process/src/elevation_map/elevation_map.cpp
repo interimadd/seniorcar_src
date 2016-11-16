@@ -52,7 +52,7 @@ void ElevationMap::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 		if( 0 <= num_x && num_x < MAP_SIZE_X * 2 ){
 			num_y = int( float(MAP_SIZE_Y) + ( laser_point_data.points[i].y - center_y ) / HORIZONTAL_RESOLUTION );
 			if( 0 <= num_y && num_y < MAP_SIZE_Y * 2 ){
-				if( -1.0 < laser_point_data.points[i].z && laser_point_data.points[i].z < 0.5){
+				if( -11.0 < laser_point_data.points[i].z && laser_point_data.points[i].z < 10.5){
 					variance_map[num_x][num_y][1] += 1; //n
 					variance_map[num_x][num_y][2] += pow( laser_point_data.points[i].z , 2) ;
 					variance_map[num_x][num_y][3] += laser_point_data.points[i].z ;

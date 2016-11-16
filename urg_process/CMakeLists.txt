@@ -215,3 +215,10 @@ add_executable(laser_point_to_elevation_map
   src/laser_point_to_elevation_map.cpp
 )
 target_link_libraries(laser_point_to_elevation_map ${catkin_LIBRARIES})
+
+add_executable(laser_point_to_elevation_map_for_simulator 
+  src/elevation_map/elevation_map.cpp
+  src/risk_calculater_for_elevation_map/risk_calculater_for_elevation_map.cpp
+  src/laser_point_to_elevation_map_for_simulator.cpp
+)
+target_link_libraries(laser_point_to_elevation_map_for_simulator ${catkin_LIBRARIES})

@@ -42,12 +42,12 @@ This program contains the description of the robot base model for the Clearpath 
   <property name="chassis_length" value="1.75" />  
   <property name="chassis_width" value="0.711" /> 
   <property name="chassis_height" value="0.495" /> 
-  <property name="chassis_mass" value="487" />
-  <property name="front_axle_mass" value="113" />
+  <property name="chassis_mass" value="20" />
+  <property name="front_axle_mass" value="15" />
   <property name="front_axle_radius" value="0.13" />
   <property name="front_axle_length" value="1.0" />
-  <property name="base_x_origin_to_wheel_origin" value="0.448" /> <!-- 240/2 + 660/2-->
-  <property name="base_y_origin_to_wheel_origin" value="0.499" /> <!--(1282-711)/4 + 711/2--> 
+  <property name="base_x_origin_to_wheel_origin" value="0.948" /> <!-- 240/2 + 660/2 changed from 0.448-->
+  <property name="base_y_origin_to_wheel_origin" value="0.499" /> <!--(1282-711)/4 + 711/2 = 1282/4 + 711/2 --> 
   <property name="base_z_origin_to_wheel_origin" value="0.0" />
 
   <!-- Root link of Grizzly -->
@@ -151,17 +151,11 @@ This program contains the description of the robot base model for the Clearpath 
     </collision>
   </link>
   <joint name="front_axle_joint"
-         type="revolute">
+         type="fixed">
     <origin xyz="${base_x_origin_to_wheel_origin} 0 0"
             rpy="0 0 0" />
     <parent link="chassis_link" />
     <child link="front_axle_link" />
-    <axis xyz="1 0 0"
-          rpy="0 0 0" />
-    <limit effort="10"
-           lower="-0.2"
-           upper="0.2"
-           velocity="0.5" />
   </joint>
 
   <grizzly_wheel fr="front" lr="left" parent="front_axle_link"
@@ -220,14 +214,14 @@ This program contains the description of the robot base model for the Clearpath 
     <!-- LRF Original -->
   <joint name="hokuyo_joint" type="fixed">
     <axis xyz="0 0 0" />
-    <origin xyz="0.0 0.0 0.1" rpy="0 0 0"/>
+    <origin xyz="0.0 0.0 0.3" rpy="0 0.5 0"/>
     <parent link="pico_flexx_link_optical_frame"/>
     <child link="hokuyo_link"/>
   </joint>
 
   <link name="hokuyo_link">
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0" rpy="0 0.5 0"/>
       <geometry>
         <box size="0.01 0.01 0.01"/>
       </geometry>
@@ -275,6 +269,37 @@ This program contains the description of the robot base model for the Clearpath 
       <mass value="1e-5" />
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <!-- human wieght -->
+
+  <joint name="human_mass_joint" type="fixed">
+    <axis xyz="0 0 0" />
+    <origin xyz="0.0 0.0 2.0" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="human_mass_link"/>
+  </joint>
+
+  <link name="human_mass_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="1 1 1"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="50" />
+      <origin xyz="0 -0.3 0" rpy="0 0 0"/>
+      <inertia ixx="10" ixy="0" ixz="0" iyy="10" iyz="0" izz="10" />
     </inertial>
   </link>
 

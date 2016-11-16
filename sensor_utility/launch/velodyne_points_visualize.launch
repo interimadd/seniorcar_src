@@ -1,0 +1,9 @@
+<!-- -->
+<launch>
+
+	<arg name="bagfile_path" default="/media/ishikawa/DATAPART1/HDD/bagfiles/odometry_test/4km_velodyne_points.bag" />
+
+	<node pkg="rosbag" type="play" name="play" args="$(arg bagfile_path) --delay=1 --clock --rate=1"/>
+	<node pkg="rviz" type="rviz" name="rviz" args="-d $(find velodyne_pointcloud)/include/velodyne_visualize.rviz"/>
+  
+</launch>

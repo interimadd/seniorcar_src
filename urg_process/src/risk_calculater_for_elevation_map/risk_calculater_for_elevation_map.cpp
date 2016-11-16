@@ -41,7 +41,7 @@ void RiskCalculater::generatePath(geometry_msgs::Pose now_pos, ultimate_seniorca
 	tf::Matrix3x3 m(q);
 	double roll, pitch, yaw;
 	m.getRPY(roll, pitch, yaw);
-	//cout << roll << "," << pitch <<","<<yaw<<endl;
+	cout << roll << "," << pitch <<","<<yaw<<endl;
 
 	for(int i=0; i < DEG_CALCULTE_NUM; i++){
 		predicted_path[i][0][X] = now_pos.position.x ;
@@ -189,7 +189,7 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 
 	CalculatedVehicleState tmp_calculated_state;
 	cout << "calstart" ;
-	//cout << endl << endl << "start  now_pos  x:" << now_pos.position.x << ", y:" << now_pos.position.y << ", th:" << now_pos.orientation.w << endl;
+	cout << "start  now_pos  x:" << now_pos.position.x << ", y:" << now_pos.position.y << ", th:" << now_pos.orientation.w << endl;
 
 	//  速度0だと崖のすぐ側でもリスク0となってしまうので、一定値以上の速度を持つように調整
 	if(now_state.vehicle_velocity < MIN_VHEICLE_VELOCITY){
@@ -243,7 +243,7 @@ float RiskCalculater::calculateRisk(geometry_msgs::Pose now_pos, ultimate_senior
 
 	float TTI = float(max_j) * CALCULATE_TIME_STEP;
 
-	cout << "," << now_pos.position.x << "," << TTI << endl;
+	//cout << "," << now_pos.position.x << "," << TTI << endl;
 
 	return TTI;
 
