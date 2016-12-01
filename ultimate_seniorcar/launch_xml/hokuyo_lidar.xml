@@ -46,18 +46,29 @@
  		<remap from="scan" to="scan_tilt"/>
 	</node>
   -->
-
+  
 	<node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node_front_tilt">
-		<param name="max_ang" value="1.6"/>
-  	<param name="min_ang" value="-1.6"/>
+		<param name="max_ang" value="1.4"/>
+  	<param name="min_ang" value="-1.4"/>
   	<param name="port" value="$(arg front_tiltLRF_port)"/>
   	<param name="skip" value="0"/>
   	<param name="frame_id" value="/laser_tilt"/>
   	<remap from="scan" to="scan_tilt"/>
 	</node>
 
+<!--
+  <node pkg="urg_node" type="urg_node" name="urg_node_front_tilt">
+    <param name="angle_max" value="1.4"/>
+    <param name="angle_min" value="-1.4"/>
+    <param name="serial_port" value="$(arg front_tiltLRF_port)"/>
+    <param name="frame_id" value="/laser_tilt"/>
+    <param name="publish_intensity" value="false"/>
+    <remap from="scan" to="scan_tilt"/>
+  </node>
+-->
+
 	<!--<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.53 0.0 0.65 0.0 /base_link /laser_tilt 40" /> --> <!-- 2016/6/20以前のパラメータ -->
-  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.54 0.0 0.419 0.0 /base_link /laser_tilt 40" />
+  <node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.54 0.0 0.32 0.0 /base_link /laser_tilt 40" />
 
 
 	<!-- 後方水平向きLRF -->
@@ -78,6 +89,6 @@
   </node>
 
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_back" args="-0.16 0.0 0.27 3.14 0.0 0.0 /base_link /laser_back 40" />
-	<node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 1.2 0.0 0.0 0.0 /base_link /velodyne 40"/>
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 1.7 0.0 0.0 0.0 /base_link /velodyne 40"/>
 
 </launch>

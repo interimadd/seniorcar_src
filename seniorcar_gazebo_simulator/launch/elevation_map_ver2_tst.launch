@@ -4,9 +4,8 @@
 	<param name="tilt_laser_topic" value="scan"/>
 
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="3.0 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
-	<node pkg="tf" type="static_transform_publisher" name="base_link_to_read_map_center" args="5.0 0.0 0.0 0.0 0.0 0.0 /base_link /read_map_center 40" />
 
-	<node pkg="urg_process" type="laser_point_to_elevation_map_for_simulator" name="laser_point_to_elevation_map_for_simulator" output="screen"/>
+	<node pkg="urg_process" type="laser_point_to_elevation_map_ver2" name="laser_point_to_elevation_map_ver2" output="screen"/>
 	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
 	
 	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/elevation_map_visualize.rviz"/>

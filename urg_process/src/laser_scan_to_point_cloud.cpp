@@ -20,8 +20,6 @@ class ScanToPoint{
 
 void ScanToPoint::scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
 {
-  cout << ros::Duration() << " " << ros::Time(0) << " " << scan_in->header.stamp << endl;
-  
   if(!listener_.waitForTransform(
         scan_in->header.frame_id,
         "/odom",
@@ -29,9 +27,6 @@ void ScanToPoint::scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
         ros::Duration(1.0))){
      return;
   }
-  
-  cout << ros::Duration() << " " << ros::Time(0) << " " << scan_in->header.stamp << endl;
-
   sensor_msgs::PointCloud cloud;
   projector_.transformLaserScanToPointCloud("/odom",*scan_in,cloud,listener_);
 

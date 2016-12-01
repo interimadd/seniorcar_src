@@ -7,29 +7,34 @@
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_front" args="1.06 0.0 0.27 0.0 0.0 0.0 /base_link /laser_front 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_tilt" args="1.06 0.05 0.54 0.0 0.32 0.0 /base_link /laser_tilt 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_laser_back" args="-0.16 0.0 0.27 3.14 0.0 0.0 /base_link /laser_back 40" />
-	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="1.5 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
-	<node pkg="tf" type="static_transform_publisher" name="base_link_to_read_map_center" args="5.0 0.0 0.0 0.0 0.0 0.0 /base_link /read_map_center 40" />
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="2.0 0.0 -0.2 0.0 0.0 0.0 /base_link /map_center 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_imu" args="0.0 0.0 0.0 0.0 0.0 0.0 /base_link /imu 40" />
 	<node pkg="tf" type="static_transform_publisher" name="base_link_to_velodyne" args="1.06 0.0 1.1 0.0 0.0 0.0 /base_link /velodyne 40" />
 
-	<node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom" output="screen"/>
+	<node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom"/>
 	<node pkg="ultimate_seniorcar" type="seniorcar_odometry.py" name="odo" />
-
-	<!-- IMUのデータから姿勢角度、角速度、角加速度を出力してくれるすごいノード -->
+	
 	<node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter">
-		<!--<param name="use_magnetic_field_msg" value="true" />-->
-		<param name="gain" value="1.0" />
+		<param name="gain" value="0.05" />
+		<param name="use_mag" value="false" />
 	</node>
-
+	
 	<include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/20161130_turn_right_on_unevenoad.bag --delay=0.1 --clock">
+	<node pkg="urg_process" type="laser_point_to_voxel_map" name="laser_point_to_voxel_map" output="screen"/>
+
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
+	<!--<node pkg="urg_process" type="pointcloud2_to_pointcloud" name="pointcloud2_to_pointcloud" output="screen" />-->
+
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_park/exp1.bag --delay=0.1 --rate=1.0 --clock">
 		<remap from="tf" to="tf_escape"/>
 		<remap from="tf_static" to="tf_static_escape"/>
 		<remap from="imu/data" to="imu_data_escape"/>
 		<remap from="seniorcar_odometry" to="seniorcar_odometry_escape"/>
 	</node>
+
+	<node pkg="seniorcar_test" type="generate_seniorcar_comannd_to_avoid_predicted_accident.py" name="generate_seniorcar_comannd_to_avoid_predicted_accident" />
 	
-	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/seniorcar_visualize.rviz"/>
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/elevation_map_visualize.rviz"/>
 
 </launch> 

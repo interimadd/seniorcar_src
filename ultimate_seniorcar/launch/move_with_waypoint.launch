@@ -40,7 +40,7 @@
     </include>
 
     
-    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel _with_ver2.xml">
+    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel_with_ver2.xml">
         <arg name="steer_motor_port" value="$(arg steer_motor_port)"/>
     </include>
 

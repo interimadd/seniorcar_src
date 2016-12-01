@@ -10,7 +10,7 @@ from geometry_msgs.msg import Quaternion
 from tf.transformations import euler_from_quaternion
 from sensor_msgs.msg import Imu
 
-CALCULATE_3DIMENTION_ODOMETRY = True  # 三次元的な動きを計算するかどうか
+CALCULATE_3DIMENTION_ODOMETRY = True  # 三次元的な動きを計算するかどうか ロールピッチヨーは車両ではなくワールド座標に固定されてるっぽい？参考url http://www.buildinsider.net/small/bookkinectv2/0804
 
 COV = 0.0005356910249999999
 COV_MATRIX = [1e-3, 0.0, 0.0, 0.0, 0.0, 0.0, 
@@ -20,11 +20,14 @@ COV_MATRIX = [1e-3, 0.0, 0.0, 0.0, 0.0, 0.0,
               0.0, 0.0, 0.0, 0.0, 1e-6, 0.0, 
               0.0, 0.0, 0.0, 0.0, 0.0, 1e3]
 WHEEL_BASE = 0.9 # 車体のホイールベース
-STEEA_ANGLE_OFFSET = 2.4 # セニアカーのCAN情報を直接読み取ると何故か直進時に-1.0deg程度になるので、それを補正する用 ＋がでかいと左に行く
-RIGHT_TURN_MAGNIFICATION = 1.04267 # 右旋回時に実際の値より1.05倍程度になることから補正
-LEFT_TURN_MAGNIFICATION  = 0.95674 # 左旋回時に実際の値より0.95倍程度になることから補正
+#STEEA_ANGLE_OFFSET = 2.4 # セニアカーのCAN情報を直接読み取ると何故か直進時に-1.0deg程度になるので、それを補正する用 ＋がでかいと左に行く
+STEEA_ANGLE_OFFSET = 0.0
+#RIGHT_TURN_MAGNIFICATION = 1.04267 # 右旋回時に実際の値より1.05倍程度になることから補正
+#LEFT_TURN_MAGNIFICATION  = 0.95674 # 左旋回時に実際の値より0.95倍程度になることから補正
+RIGHT_TURN_MAGNIFICATION = 1.1
+LEFT_TURN_MAGNIFICATION = 1.1
 
-IMU_PITCH_DEFFULT_ANGLE = 0.0 * math.pi / 180.0
+IMU_PITCH_DEFFULT_ANGLE = -1.0 * math.pi / 180.0
 
 
 class OdometryCalculator:
@@ -80,9 +83,9 @@ class OdometryCalculator:
 
         if CALCULATE_3DIMENTION_ODOMETRY:
 
-            self.odometry.pose.pose.position.x += v * dt * ( math.cos(yaw + deltaTheta/2.0) * math.cos(self.imu_pitch) )
-            self.odometry.pose.pose.position.y += v * dt * ( math.sin(yaw + deltaTheta/2.0) * math.cos(self.imu_roll) + math.sin(self.imu_roll) * math.sin(self.imu_pitch) * math.cos(yaw + deltaTheta/2.0) )
-            self.odometry.pose.pose.position.z += v * dt * ( math.sin(yaw + deltaTheta/2.0) * math.sin(self.imu_roll) - math.cos(self.imu_roll) * math.sin(self.imu_pitch) * math.cos(yaw + deltaTheta/2.0) )
+            self.odometry.pose.pose.position.x += v * dt * math.cos(yaw + deltaTheta/2.0) * math.cos(self.imu_pitch) 
+            self.odometry.pose.pose.position.y += v * dt * math.sin(yaw + deltaTheta/2.0) * math.cos(self.imu_pitch) 
+            self.odometry.pose.pose.position.z -= v * dt * math.sin(self.imu_pitch) 
             self.odometry.twist.twist.linear.x  = v * math.cos(yaw) 
             self.odometry.twist.twist.linear.y  = v * math.sin(yaw) 
             self.odometry.twist.twist.linear.z  = v * ( math.sin(yaw + deltaTheta/2.0) * math.sin(self.imu_roll) - math.cos(self.imu_roll) * math.sin(self.imu_pitch) * math.cos(yaw + deltaTheta/2.0) )
@@ -104,12 +107,15 @@ class OdometryCalculator:
 
     def update_pitch_roll(self,data):
 
-        (self.imu_roll,self.imu_pitch,yaw) = euler_from_quaternion([data.orientation.x,data.orientation.y,data.orientation.z,data.orientation.w])
-        
+        (self.imu_roll,self.imu_pitch,yaw) = euler_from_quaternion([data.orientation.x,data.orientation.y,data.orientation.z,data.orientation.w])        
         self.imu_roll += math.pi   # rollの処理謎
         self.imu_pitch -= IMU_PITCH_DEFFULT_ANGLE
         self.imu_pitch *= -1
-        
+        """
+        self.imu_yaw   =  math.atan2(2.0 * data.orientation.x * data.orientation.y + 2.0 * data.orientation.w * data.orientation.z , data.orientation.w * data.orientation.w + data.orientation.x * data.orientation.x - data.orientation.y * data.orientation.y - data.orientation.z * data.orientation.z)
+        self.imu_pitch =  -math.asin( 2.0 * data.orientation.w * data.orientation.y - 2.0 * data.orientation.x * data.orientation.z)
+        self.imu_roll  =  math.atan2(2.0 * data.orientation.y * data.orientation.z + 2.0 * data.orientation.w * data.orientation.x, -data.orientation.w * data.orientation.w + data.orientation.x * data.orientation.x + data.orientation.y * data.orientation.y - data.orientation.z * data.orientation.z)
+        """
 
     def publish_loop(self):
 

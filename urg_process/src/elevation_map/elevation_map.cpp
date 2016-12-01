@@ -273,7 +273,7 @@ void ElevationMap::InterpolateMap(){
 			height_sum = height_sum / sum_num ;
 
 			if(height_map[i][j] == NOT_DETECT){
-				if(sum_num>3){
+				if(sum_num>10){
 					interpolated_height_map[i][j] = height_sum;
 				}
 				else{

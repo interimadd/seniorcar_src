@@ -2,7 +2,7 @@
 #define __RISK_CALCULATER_H_INCLUDED__
 
 #include "../elevation_map/elevation_map.h" 
-#include "seniorcar_param.h"
+#include "../parameter/seniorcar_param.h"
 #include "geometry_msgs/Pose.h"
 #include <tf/transform_listener.h>
 #include "ultimate_seniorcar/SeniorcarState.h"

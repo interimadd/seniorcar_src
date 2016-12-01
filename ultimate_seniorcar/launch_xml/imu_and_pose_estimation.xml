@@ -12,7 +12,8 @@
 
   <!-- IMUのデータから姿勢角度、角速度、角加速度を出力してくれるすごいノード -->
   <node pkg="imu_filter_madgwick" type="imu_filter_node" name="imu_filter">
-      <param name="use_magnetic_field_msg" value="true" />
+    <param name="gain" value="0.05" />
+    <param name="use_mag" value="false" />
   </node>
   
 <!--

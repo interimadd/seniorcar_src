@@ -1,0 +1,17 @@
+<launch>
+
+	<param name="tilt_laser_topic" value="scan_tilt"/>
+
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="1.5 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_read_map_center" args="5.0 0.0 0.0 0.0 0.0 0.0 /base_link /read_map_center 40" />
+
+	<node pkg="urg_process" type="laser_point_to_elevation_map_ver2" name="laser_point_to_elevation_map" output="screen"/>
+
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" output="screen"/>
+	<!--<node pkg="urg_process" type="pointcloud2_to_pointcloud" name="pointcloud2_to_pointcloud" output="screen" />-->
+
+	<node pkg="seniorcar_test" type="generate_seniorcar_comannd_to_avoid_predicted_accident.py" name="generate_seniorcar_comannd_to_avoid_predicted_accident" />
+	
+	<node pkg="rviz" type="rviz" name="rviz_predict" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/elevation_map_visualize.rviz"/>
+
+</launch> 

@@ -1,18 +1,15 @@
 <launch>
 
-	<!-- USBポート番号の定義 -->
+    <!-- USBポート番号の定義 -->
 	
     <arg name="frontLRF_port"      value="/dev/ttyACM3"/>
-    <arg name="front_tiltLRF_port" value="/dev/ttyACM1"/>
+    <arg name="front_tiltLRF_port" value="/dev/ttyACM0"/>
     <arg name="backLRF_port"       value="/dev/ttyACM2"/>
-    <arg name="imu_port"           value="/dev/ttyACM0"/>
+    <arg name="imu_port"           value="/dev/ttyACM1"/>
     <arg name="steer_motor_port"   value="/dev/ttyUSB0"/>
     <arg name="canusb_port"        value="/dev/ttyUSB1"/>
 
-	<!-- 各種センサへの接続 -->
-    
-    <param name="canusb_port" value="$(arg canusb_port)"/>
-    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter" output="screen" />
+    <!-- 各種センサへの接続 -->
     
     <include file="$(find ultimate_seniorcar)/launch_xml/hokuyo_lidar.xml"> 
     	<arg name="frontLRF_port"       value="$(arg frontLRF_port)"/> 
@@ -23,6 +20,11 @@
     <include file="$(find ultimate_seniorcar)/launch_xml/imu_and_pose_estimation.xml">
         <arg name="imu_port" value="$(arg imu_port)"/>
     </include>
+
+    <!-- モータドライバの起動 -->
+
+    <param name="steer_motor_port" value="$(arg steer_motor_port)" />
+    <node pkg="ultimate_seniorcar" type="steer_motor_controller_connecter_div.py" name="steer_motor_controller_connecter_div" output="screen"/>
 
     <!-- 各種ノード立ち上げ -->
     <node pkg="ultimate_seniorcar" type="seniorcar_odometry.py" name="seniorcar_odometry" />

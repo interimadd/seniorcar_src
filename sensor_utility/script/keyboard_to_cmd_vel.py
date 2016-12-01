@@ -25,13 +25,13 @@ class CalculateVoltage:
 
 	def keyboarddownCallback(self,key):
 		if key.code == RIGHT:
-			self.pub_twist.angular.z = -8
+			self.pub_twist.angular.z = -2
 		elif key.code == LEFT:
-			self.pub_twist.angular.z = 8
+			self.pub_twist.angular.z = 2
 		elif key.code == UP:
-			self.pub_twist.linear.x = 1.5
+			self.pub_twist.linear.x = 0.5
 		elif key.code == DOWN:
-			self.pub_twist.linear.x = -1.5
+			self.pub_twist.linear.x = -0.5
 		elif key.code == SPACE:
 			self.pub_twist.linear.x = 0
 			self.pub_twist.angular.z = 0

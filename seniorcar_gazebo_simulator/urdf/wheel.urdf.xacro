@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 This program contains the description of the robot wheel model for Clearpath Grizzly
 -->
 <robot name="grizzly_wheel" xmlns:xacro="http://ros.org/wiki/xacro">
-  <property name="wheel_mass" value="1" />
+  <property name="wheel_mass" value="10" />
   <property name="wheel_radius" value="0.33" />
   <property name="wheel_width" value="0.1" />
 

@@ -12,6 +12,10 @@ find_package(catkin REQUIRED COMPONENTS
   laser_geometry
   tf
 )
+find_package( PCL REQUIRED )
+include_directories(  ${catkin_INCLUDE_DIRS}  ${PCL_INCLUDE_DIRS} )
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -222,3 +226,22 @@ add_executable(laser_point_to_elevation_map_for_simulator
   src/laser_point_to_elevation_map_for_simulator.cpp
 )
 target_link_libraries(laser_point_to_elevation_map_for_simulator ${catkin_LIBRARIES})
+
+add_executable(laser_point_to_elevation_map_ver2 
+  src/elevation_map_ver2/elevation_map_ver2.cpp
+  src/elevation_map_ver2/accident_predictor.cpp
+  src/laser_point_to_elevation_map_ver2.cpp
+)
+target_link_libraries(laser_point_to_elevation_map_ver2 ${catkin_LIBRARIES})
+
+add_executable(pointcloud2_to_pointcloud.cpp src/pointcloud2_to_pointcloud.cpp)
+target_link_libraries(pointcloud2_to_pointcloud.cpp  ${PCL_LIBRARIES} ${catkin_LIBRARIES})
+
+
+add_executable(laser_point_to_voxel_map
+  src/penetration_voxel_map/penetration_voxel_map.cpp
+  src/laser_point_to_voxel_map.cpp
+)
+target_link_libraries(laser_point_to_voxel_map ${catkin_LIBRARIES})
+
+

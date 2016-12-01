@@ -13,6 +13,7 @@ from ultimate_seniorcar.msg import SeniorcarState
 class CANUSB_Connecter:
 
 	seniorcar_state = SeniorcarState()
+	STEER_ANGLE_OFFSET = 0.0
 
 	def __init__(self):
 		rospy.init_node('canusb_connecter', anonymous=True)
@@ -21,6 +22,7 @@ class CANUSB_Connecter:
 		self.connect_with_canusb()
 		self.pub.publish(self.seniorcar_state)
 		print self.pub
+		self.STEER_ANGLE_OFFSET = rospy.get_param('canusb_steer_angle_offset',0.0) 
 
 
 	def connect_with_canusb(self):
@@ -236,6 +238,8 @@ class CANUSB_Connecter:
 		self.seniorcar_state_array[6] = (byte7_data >> 2) & 1
 		self.seniorcar_state_array[7] = (byte7_data >> 3) & 1
 		self.seniorcar_state_array[8] = (byte7_data >> 4) & 1
+
+		self.seniorcar_state_array[2] -= self.STEER_ANGLE_OFFSET
 
 
 if __name__ == '__main__':

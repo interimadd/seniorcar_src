@@ -13,7 +13,7 @@ from geometry_msgs.msg import Quaternion
 from numpy import *
 from tf.transformations import euler_from_quaternion
 
-RAD_TO_DEG = 180 / math.pi
+RAD_TO_DEG = 180.0 / math.pi
 roll  = 0
 pitch = 0
 yaw   = 0
@@ -29,6 +29,10 @@ def callback(data):
     global yaw
 
     (roll,pitch,yaw) = euler_from_quaternion([q.x,q.y,q.z,q.w])
+    #yaw   =  math.atan2(2.0 * q.x * q.y + 2.0 * q.w * q.z , q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z)
+    #pitch =  math.asin( 2.0 * q.w * q.y - 2.0 * q.x * q.z)
+    #roll  =  math.atan2(2.0 * q.y * q.z + 2.0 * q.w * q.x, -q.w * q.w + q.x * q.x + q.y * q.y - q.z * q.z)
+
     roll  = roll  * RAD_TO_DEG
     pitch = pitch * RAD_TO_DEG
     yaw   = yaw   * RAD_TO_DEG
@@ -52,9 +56,5 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         now = rospy.get_rostime()
-        roll += 180.0
-        if roll > 90:
-            roll -= 360
-        pitch -= 1.0
         print "%d.%09d,%f,%f,%f,%f,%f" % ( now.secs,now.nsecs,now_odom.pose.pose.position.x,now_odom.pose.pose.position.y,roll,pitch,yaw)
         rate.sleep()

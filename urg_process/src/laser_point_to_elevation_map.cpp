@@ -64,16 +64,18 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
   }
   */
   if( pow(elevation_map.center_x-transform.getOrigin().x(),2) + pow(elevation_map.center_y-transform.getOrigin().y(),2) > 1.0 ){
-    //elevation_map.MoveHeightMapCenter(transform.getOrigin().x(), transform.getOrigin().y());
+    elevation_map.MoveHeightMapCenter(transform.getOrigin().x(), transform.getOrigin().y());
     //elevation_map.outputElevationMapToTextFile();
     //printf("%f,%f,%f\n",transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
   }
 
+  /*
   if( pow(last_calc_x - transform_vehicle_front.getOrigin().x(),2) + pow(last_calc_y - transform_vehicle_front.getOrigin().y(),2) > 1.0 ){
     elevation_map.inputElevationMapFromTextFile(transform_read_map_center.getOrigin().x(), transform_read_map_center.getOrigin().y());
     last_calc_x = transform_vehicle_front.getOrigin().x();
     last_calc_y = transform_vehicle_front.getOrigin().y();
   }
+  */
 
 
 }

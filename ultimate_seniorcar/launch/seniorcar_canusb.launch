@@ -1,0 +1,13 @@
+<launch>
+
+	<!-- USBポート番号の定義 -->
+    <arg name="canusb_port"        value="/dev/ttyUSB2"/>
+    
+	<!-- 操舵角度のオフセット。まっすぐ走れる角度 -->
+    <param name="canusb_steer_angle_offset" value="-4.1"/>
+
+	<!-- 各種センサへの接続 -->
+    <param name="canusb_port" value="$(arg canusb_port)"/>
+    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter" output="screen" />
+    
+</launch>
