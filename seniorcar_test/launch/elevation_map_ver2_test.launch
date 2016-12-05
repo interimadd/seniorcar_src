@@ -24,10 +24,10 @@
 
 	<node pkg="urg_process" type="laser_point_to_elevation_map_ver2" name="laser_point_to_elevation_map" output="screen"/>
 
-	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" output="screen"/>
 	<!--<node pkg="urg_process" type="pointcloud2_to_pointcloud" name="pointcloud2_to_pointcloud" output="screen" />-->
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/risk_test/exp1_2km.bag --delay=0.1 --clock">
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/1202_railroad_crosiing/exp3_1.bag --delay=0.1 --clock">
 		<remap from="tf" to="tf_escape"/>
 		<remap from="tf_static" to="tf_static_escape"/>
 		<remap from="imu/data" to="imu_data_escape"/>

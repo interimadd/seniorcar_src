@@ -42,6 +42,25 @@ AccidentPredictor::AccidentPredictor(float pos_x,float pos_y,int map_size_x,int 
 
 	cout << "tire_radius_in_grid:" << tire_radius_in_grid << "  half_tire_width_in_grid:" << half_tire_width_in_grid << endl;
 
+	// タイヤの内どこで何を計算するかを計算しておく
+	const double TIRE_X_SPLIT_NUM = 2;
+	const double TIRE_Y_SPLIT_NUM = 1;
+	const double TIRE_CALC_MARGINE = 0.02;
+	tire_calculation_point.resize( ( TIRE_X_SPLIT_NUM * 2 + 1 ) * (TIRE_Y_SPLIT_NUM * 2 + 1));
+	for(int i=0; i < ( TIRE_X_SPLIT_NUM * 2 + 1 ) * (TIRE_Y_SPLIT_NUM * 2 + 1) ;i++){
+		tire_calculation_point[i].resize(3);
+	}
+	for(int i=0; i < TIRE_X_SPLIT_NUM * 2 + 1 ; i++){
+		for(int j=0; j < TIRE_Y_SPLIT_NUM * 2 + 1 ; j++){
+			int tire_calc_index = i*( TIRE_Y_SPLIT_NUM * 2 + 1 ) + j ;
+			tire_calculation_point[tire_calc_index][0] = ( (SENIORCAR_WHEEL_RADIUS - TIRE_CALC_MARGINE) / TIRE_X_SPLIT_NUM ) * ( i - TIRE_X_SPLIT_NUM );
+			tire_calculation_point[tire_calc_index][1] = ( SENIORCAR_WHEEL_THICKNESS / ( TIRE_Y_SPLIT_NUM * 2 ) ) * ( j - TIRE_Y_SPLIT_NUM );
+			tire_calculation_point[tire_calc_index][2] = -sqrt( pow(SENIORCAR_WHEEL_RADIUS,2) - pow(tire_calculation_point[tire_calc_index][0],2));
+			cout << "tire_index:" << tire_calc_index << " x:" << tire_calculation_point[tire_calc_index][0] << " y:" << tire_calculation_point[tire_calc_index][1] << " z:" << tire_calculation_point[tire_calc_index][2] << endl;
+		}
+	}
+
+
 }
 
 
@@ -127,22 +146,47 @@ void AccidentPredictor::returnTirePositionAtGivenPose(CalculatedVehicleState *re
 
 	return_tire_pos->tire_pos[FRONT_LEFT][X] = pose[X] + SENIORCAR_WHEEL_BASE_LENGTH * cos(pose[TH]) - SENIORCAR_HARF_TREAD_LENGTH * sin(pose[TH]);
 	return_tire_pos->tire_pos[FRONT_LEFT][Y] = pose[Y] + SENIORCAR_WHEEL_BASE_LENGTH * sin(pose[TH]) + SENIORCAR_HARF_TREAD_LENGTH * cos(pose[TH]);
+	return_tire_pos->tire_pos[FRONT_LEFT][3] = pose[TH];
 
 	return_tire_pos->tire_pos[FRONT_RIGHT][X] = pose[X] + SENIORCAR_WHEEL_BASE_LENGTH * cos(pose[TH]) + SENIORCAR_HARF_TREAD_LENGTH * sin(pose[TH]);
 	return_tire_pos->tire_pos[FRONT_RIGHT][Y] = pose[Y] + SENIORCAR_WHEEL_BASE_LENGTH * sin(pose[TH]) - SENIORCAR_HARF_TREAD_LENGTH * cos(pose[TH]);
+	return_tire_pos->tire_pos[FRONT_RIGHT][3] = pose[TH];
 
 	return_tire_pos->tire_pos[BACK_LEFT][X] = pose[X] - SENIORCAR_HARF_TREAD_LENGTH * sin(pose[TH]);
 	return_tire_pos->tire_pos[BACK_LEFT][Y] = pose[Y] + SENIORCAR_HARF_TREAD_LENGTH * cos(pose[TH]);
+	return_tire_pos->tire_pos[BACK_LEFT][3] = pose[TH];
 
 	return_tire_pos->tire_pos[BACK_RIGHT][X] = pose[X] + SENIORCAR_HARF_TREAD_LENGTH * sin(pose[TH]);
 	return_tire_pos->tire_pos[BACK_RIGHT][Y] = pose[Y] - SENIORCAR_HARF_TREAD_LENGTH * cos(pose[TH]);
+	return_tire_pos->tire_pos[BACK_RIGHT][3] = pose[TH];
 
-	int tmp_index[2];
+	//int tmp_index[2];
 
 	for(int i = 0; i < 4 ;i++){
-		TranslateRealCordinateToIndex(tmp_index,return_tire_pos->tire_pos[i]);
-		return_tire_pos->tire_pos[i][Z] = returnTireHeightInGrid(tmp_index[0],tmp_index[1]);
+		//TranslateRealCordinateToIndex(tmp_index,return_tire_pos->tire_pos[i]);
+		//return_tire_pos->tire_pos[i][Z] = returnTireHeightInGrid(tmp_index[0],tmp_index[1]);
+		return_tire_pos->tire_pos[i][Z] = returnTireHeightAtGivenPositionAndPose(return_tire_pos->tire_pos[i][X],return_tire_pos->tire_pos[i][Y],return_tire_pos->tire_pos[i][3]);
 	}
+
+}
+
+
+double AccidentPredictor::returnTireHeightAtGivenPositionAndPose(double x_pos,double y_pos,double tire_theta){
+
+	const float START_HEIGHT = -10.0;
+	float max_height = START_HEIGHT;
+	float tire_pos[2],tire_pos_z;
+	int    tire_pos_index[2];
+
+	for(int i=0; i < tire_calculation_point.size() ;i++){
+		tire_pos[0] = x_pos + tire_calculation_point[i][0] * cos(tire_theta) - tire_calculation_point[i][1] * sin(tire_theta);
+		tire_pos[1] = y_pos + tire_calculation_point[i][0] * sin(tire_theta) + tire_calculation_point[i][1] * cos(tire_theta);
+		TranslateRealCordinateToIndex(tire_pos_index, tire_pos);
+		tire_pos_z = tire_calculation_point[i][2] + height_map[tire_pos_index[0]][tire_pos_index[1]] ;
+		max_height = max(max_height,tire_pos_z);
+	}
+
+	return max_height;
 
 }
 

@@ -4,6 +4,9 @@
 #include <iostream>
 using namespace std;
 
+double MIN_DISTANCE = 0.5;  // Scanデータで近すぎるものを除去するときの距離の閾値
+double NOT_DETECT   = 1000; // 短すぎるデータを置換して仮想的に除去する。置き換える距離
+
 class ScanToPoint{
   private:
     laser_geometry::LaserProjection projector_;
@@ -27,8 +30,17 @@ void ScanToPoint::scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
         ros::Duration(1.0))){
      return;
   }
+  
+  sensor_msgs::LaserScan scan_filtered = *scan_in;
+  int data_num = ( scan_filtered.angle_max - scan_filtered.angle_min ) / scan_filtered.angle_increment;
+  for(int i=0;i < 100; i++){
+    if( scan_filtered.ranges[i] < MIN_DISTANCE ){
+      scan_filtered.ranges[i] = NOT_DETECT;
+    }
+  }
+
   sensor_msgs::PointCloud cloud;
-  projector_.transformLaserScanToPointCloud("/odom",*scan_in,cloud,listener_);
+  projector_.transformLaserScanToPointCloud("/odom",scan_filtered,cloud,listener_);
 
   pubTrackMarkers.publish(cloud);
 

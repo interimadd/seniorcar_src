@@ -57,7 +57,8 @@ class PenetrationVoxelMap{
 		/*
 			実世界座標を配列の番号に変換
 		*/
-		void TranslateRealCordinateToIndex(int *return_index,float pose[3]);
+		void TranslateRealCordinateToIndex(int *return_index,float position_x,float position_y,float position_z);
+		bool isInMap(int x_index,int y_index,int z_index);
 
 		/*
 			配列の番号のグリッドを実世界座標のポイントに変換
@@ -67,6 +68,10 @@ class PenetrationVoxelMap{
 
 		vector < vector < vector < vector <int8_t> > > > voxel_map;	// [x_index][y_index][z_index][reflect/pass]
 		vector < vector < vector < vector <int8_t> > > > voxel_map_for_copy;
+
+		double returnPenetrationRate(int x_index,int y_index,int z_index);
+		double returnReflectionRate(int x_index,int y_index,int z_index);
+		int returnMeasuredTimes(int x_index,int y_index,int z_index);
 
 		/*
 			VoxelMapをPointCloudの形で出力する

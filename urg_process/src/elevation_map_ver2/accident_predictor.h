@@ -11,6 +11,7 @@
 //#include <algorithm>
 //#include "geometry_msgs/PoseArray.h"
 #include <visualization_msgs/Marker.h>
+#include <algorithm>
 
 
 /*
@@ -37,7 +38,7 @@ const float RAD_TO_DEG = 180.0 / M_PI;
 */
 typedef struct{
 	float vehicle_pose[3];			// 車両原点位置位置(x,y,th)
-	float tire_pos[4][3];			// 車輪位置座標((x,y,z)*4)
+	float tire_pos[4][4];			// 車輪位置座標((x,y,z,th)*4)
 	float calculated_roll_angle[2];	// 車輪位置から計算された車両の傾き（基本三点接地なので2通りある）
 	float calculated_pitch_angle[2];
 	bool  is_fall;
@@ -91,6 +92,8 @@ class AccidentPredictor : public ElevationMap
 		vector<float> tire_height;
 		int tire_radius_in_grid;
 		int half_tire_width_in_grid;
+
+		vector < vector <float> > tire_calculation_point; // [x0,y0,z0],[x1,y1,z1],[x2,y2,z2]...
 		
 		void generatePath(float pos_x,float pos_y,float yaw); // 予想経路更新
 		void returnTirePositionAtGivenPose(CalculatedVehicleState *return_tire_pos,vector<float> pose);
@@ -119,6 +122,7 @@ class AccidentPredictor : public ElevationMap
 
 		bool canDrive(float pitch_angle,float roll_angle,float y_zmp);
 		float returnTireHeightInGrid(int x_index,int y_index);
+		double returnTireHeightAtGivenPositionAndPose(double x_pos,double y_pos,double tire_theta);
 
 		/*
 			テスト用

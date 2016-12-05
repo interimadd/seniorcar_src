@@ -37,7 +37,7 @@ if __name__ == '__main__':
     rospy.Subscriber(topic, Odometry, callback)
 
     br = tf.TransformBroadcaster()
-    rate = rospy.Rate(10.0)
+    rate = rospy.Rate(100.0)
 
     while not rospy.is_shutdown():
         q = tf.transformations.quaternion_from_euler(roll, pitch, yaw)
