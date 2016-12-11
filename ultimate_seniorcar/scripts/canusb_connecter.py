@@ -22,7 +22,7 @@ class CANUSB_Connecter:
 		self.connect_with_canusb()
 		self.pub.publish(self.seniorcar_state)
 		print self.pub
-		self.STEER_ANGLE_OFFSET = rospy.get_param('canusb_steer_angle_offset',0.0) 
+		self.STEER_ANGLE_OFFSET = rospy.get_param('~steer_angle_offset',self.STEER_ANGLE_OFFSET) 
 
 
 	def connect_with_canusb(self):

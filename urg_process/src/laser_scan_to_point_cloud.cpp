@@ -5,6 +5,7 @@
 using namespace std;
 
 double MIN_DISTANCE = 0.5;  // Scanデータで近すぎるものを除去するときの距離の閾値
+double MAX_DISTANCE = 3.5;  // Scanデータで遠すぎるものを除去するときの距離の閾値
 double NOT_DETECT   = 1000; // 短すぎるデータを置換して仮想的に除去する。置き換える距離
 
 class ScanToPoint{
@@ -33,8 +34,8 @@ void ScanToPoint::scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
   
   sensor_msgs::LaserScan scan_filtered = *scan_in;
   int data_num = ( scan_filtered.angle_max - scan_filtered.angle_min ) / scan_filtered.angle_increment;
-  for(int i=0;i < 100; i++){
-    if( scan_filtered.ranges[i] < MIN_DISTANCE ){
+  for(int i=0;i < data_num; i++){
+    if( scan_filtered.ranges[i] < MIN_DISTANCE || scan_filtered.ranges[i] > MAX_DISTANCE){
       scan_filtered.ranges[i] = NOT_DETECT;
     }
   }

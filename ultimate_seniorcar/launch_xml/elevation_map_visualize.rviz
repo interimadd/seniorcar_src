@@ -119,7 +119,7 @@ Visualization Manager:
       Use rainbow: true
       Value: false
     - Alpha: 1
-      Autocompute Intensity Bounds: false
+      Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
         Max Value: 0.1
         Min Value: -0.5
@@ -128,14 +128,14 @@ Visualization Manager:
       Channel Name: intensity
       Class: rviz/LaserScan
       Color: 255; 255; 255
-      Color Transformer: AxisColor
+      Color Transformer: Intensity
       Decay Time: 200
       Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 3000
+      Max Intensity: 5036
       Min Color: 0; 0; 0
-      Min Intensity: 1000
+      Min Intensity: 880
       Name: LaserScan
       Position Transformer: XYZ
       Queue Size: 10
@@ -285,16 +285,16 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.535974
-        Min Value: -0.304026
-        Value: true
+        Max Value: 0.3
+        Min Value: 0
+        Value: false
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud
       Color: 170; 85; 0
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -305,13 +305,13 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 20
-      Size (m): 0.1
+      Size (m): 0.05
       Style: Flat Squares
       Topic: /height_map
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -385,7 +385,8 @@ Visualization Manager:
       Marker Topic: /visualization_marker
       Name: Marker
       Namespaces:
-        {}
+        calculated_state: true
+        object_map: true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -412,22 +413,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 13.3093
+      Distance: 9.56541
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 1.60775
-        Y: 0.399681
-        Z: -0.00274658
+        X: 0.575279
+        Y: 0.0728005
+        Z: -0.000335693
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.489798
+      Pitch: 1.5298
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 3.79498
+      Yaw: 3.13501
     Saved: ~
 Window Geometry:
   Displays:

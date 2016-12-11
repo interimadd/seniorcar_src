@@ -11,6 +11,7 @@ from tf.transformations import euler_from_quaternion
 from sensor_msgs.msg import Imu
 
 CALCULATE_3DIMENTION_ODOMETRY = True  # 三次元的な動きを計算するかどうか ロールピッチヨーは車両ではなくワールド座標に固定されてるっぽい？参考url http://www.buildinsider.net/small/bookkinectv2/0804
+STEER_ANGLE_OFFSET = 0.0
 
 COV = 0.0005356910249999999
 COV_MATRIX = [1e-3, 0.0, 0.0, 0.0, 0.0, 0.0, 
@@ -25,7 +26,8 @@ WHEEL_BASE = 0.9 # 車体のホイールベース
 RIGHT_TURN_MAGNIFICATION = 1.1
 LEFT_TURN_MAGNIFICATION = 1.1
 
-IMU_PITCH_DEFFULT_ANGLE = -1.0 * math.pi / 180.0
+IMU_PITCH_DEFFULT_ANGLE = -1.0
+IMU_ROLL_DEFAULT_ANGLE  = 2.0
 
 
 class OdometryCalculator:
@@ -35,7 +37,6 @@ class OdometryCalculator:
     t = 0
     imu_pitch = 0
     imu_roll = 0
-    STEER_ANGLE_OFFSET = 0.0
 
     def __init__(self):
 
@@ -53,7 +54,14 @@ class OdometryCalculator:
         self.odometry.twist.covariance = COV_MATRIX
         self.odometry.pose.pose.orientation = Quaternion(*tf.transformations.quaternion_from_euler(0, 0, 0))
 
-        self.STEER_ANGLE_OFFSET = rospy.get_param('~steer_angle_offset',0.0)
+        global CALCULATE_3DIMENTION_ODOMETRY
+        global STEER_ANGLE_OFFSET
+        global IMU_PITCH_DEFFULT_ANGLE
+        global IMU_ROLL_DEFAULT_ANGLE
+        CALCULATE_3DIMENTION_ODOMETRY = rospy.get_param('~calculate_3dimention_odmetry',CALCULATE_3DIMENTION_ODOMETRY)
+        STEER_ANGLE_OFFSET = rospy.get_param('~steer_angle_offset',STEER_ANGLE_OFFSET)
+        IMU_PITCH_DEFFULT_ANGLE = rospy.get_param('~imu_pitch_offset',IMU_PITCH_DEFFULT_ANGLE) * math.pi / 180.0
+        IMU_ROLL_DEFAULT_ANGLE= rospy.get_param('~imu_roll_offset',IMU_ROLL_DEFAULT_ANGLE) * math.pi / 180.0
 
 
     def update_odometry(self,data):
@@ -65,7 +73,7 @@ class OdometryCalculator:
         if data.direction_switch == 0:
             data.vehicle_velocity = -1.0 * data.vehicle_velocity
 
-        data.steer_angle += self.STEER_ANGLE_OFFSET
+        data.steer_angle += STEER_ANGLE_OFFSET
         #if abs(data.steer_angle) < 0.0:
         #    data.steer_angle = 0
  
@@ -109,7 +117,7 @@ class OdometryCalculator:
     def update_pitch_roll(self,data):
 
         (self.imu_roll,self.imu_pitch,yaw) = euler_from_quaternion([data.orientation.x,data.orientation.y,data.orientation.z,data.orientation.w])        
-        self.imu_roll += math.pi   # rollの処理謎
+        self.imu_roll += math.pi + IMU_ROLL_DEFAULT_ANGLE  # rollの処理謎
         self.imu_pitch -= IMU_PITCH_DEFFULT_ANGLE
         self.imu_pitch *= -1
         """
@@ -120,7 +128,7 @@ class OdometryCalculator:
 
     def publish_loop(self):
 
-        rate = rospy.Rate(10)
+        rate = rospy.Rate(50)
         while not rospy.is_shutdown():
             self.pub.publish(self.odometry)
             rate.sleep()

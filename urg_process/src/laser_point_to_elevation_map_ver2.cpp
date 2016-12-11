@@ -85,7 +85,7 @@ int main(int argc, char **argv)
   marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
   accident_predict_pub = n.advertise<ultimate_seniorcar::AccidentPredictResult>("accident_predict",10);
 
-  ros::Rate loop_rate(20);
+  ros::Rate loop_rate(50);
   
   while(ros::ok()){ 
     if( step_count % 10 == 0 ){ 

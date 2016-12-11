@@ -53,6 +53,8 @@ void moveMapCenter(){
 }
 
 
+
+
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "laser_point_to_voxel_map");
@@ -66,7 +68,7 @@ int main(int argc, char **argv)
   heightmap_pub = n.advertise<sensor_msgs::PointCloud>("height_map", 1000);
   accident_predict_pub = n.advertise<ultimate_seniorcar::AccidentPredictResult>("accident_predict",10);
 
-  ros::Rate loop_rate(20);
+  ros::Rate loop_rate(50);
   
   while(ros::ok()){ 
     if( step_count % 10 == 0 ){ 
@@ -79,6 +81,8 @@ int main(int argc, char **argv)
   }
   
   ros::spin();
+
+  penetration_voxel_map.printVoxelMapData();
 
   return 0;
 

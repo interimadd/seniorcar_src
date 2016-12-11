@@ -90,8 +90,6 @@ void PenetrationVoxelMap::RecordSensorData( geometry_msgs::Point LRFcoordinate ,
 					//cout << now_calc_index[0] << "," << now_calc_index[1] << "," << now_calc_index[2] << endl;
 				}
 			}
-			
-
 			voxel_map[laser_reflect_index[0]][laser_reflect_index[1]][laser_reflect_index[2]][REFLECT]++;
 		}
 	}
@@ -139,15 +137,21 @@ inline int PenetrationVoxelMap::returnMeasuredTimes(int x_index,int y_index,int 
 
 void PenetrationVoxelMap::VoxelMapToPointCloud(sensor_msgs::PointCloud *out){
 
+	sensor_msgs::ChannelFloat32 channel_tmp;
+	channel_tmp.name = "intensity";
+
 	for(int i=0 ; i < MAP_SIZE_X_Y * 2 ; i++){
 		for(int j=0 ; j < MAP_SIZE_X_Y * 2 ;j++){
 			for(int k=0 ; k < MAP_SIZE_Z * 2 ;k++){
-				if( returnReflectionRate(i,j,k) > 0){
+				if( returnReflectionRate(i,j,k) > 0.0){
 					out->points.push_back(TranslateIndexToRealCordinate(i,j,k));
+					channel_tmp.values.push_back(returnReflectionRate(i,j,k));
 				}
 			}
 		}
 	}
+
+	out->channels.push_back(channel_tmp);
 
 }
 
@@ -163,6 +167,10 @@ geometry_msgs::Point32 PenetrationVoxelMap::TranslateIndexToRealCordinate(int x_
 
 void PenetrationVoxelMap::MoveVoxelMapCenter(float pos_x,float pos_y,float pos_z){
 
+	pos_x = floor(pos_x);
+	pos_y = floor(pos_y);
+	pos_z = floor(pos_z);
+
 	// vectorのコピーともとのvectorの初期化
 	for(int i=0 ; i < MAP_SIZE_X_Y * 2 ; i++){
 		for(int j=0 ; j < MAP_SIZE_X_Y * 2 ;j++){
@@ -177,6 +185,7 @@ void PenetrationVoxelMap::MoveVoxelMapCenter(float pos_x,float pos_y,float pos_z
 
 	// 複製vectorを移動させる
 	int new_x_index,new_y_index,new_z_index;
+	geometry_msgs::Point32 tmp_point;
 	for(int i=0 ; i < MAP_SIZE_X_Y * 2 ; i++){
 		for(int j=0 ; j < MAP_SIZE_X_Y * 2 ;j++){
 			for(int k=0 ; k < MAP_SIZE_Z * 2 ;k++){
@@ -200,7 +209,24 @@ void PenetrationVoxelMap::MoveVoxelMapCenter(float pos_x,float pos_y,float pos_z
 
 void PenetrationVoxelMap::printVoxelMapData(){
 
+	geometry_msgs::Point32 tmp_p;
+
 	cout << "print start" << endl;
+	cout << "x,y,z,reflect_num,pass_num,reflectrate,penetrationrate" << endl;
+
+	for(int i=0 ; i < MAP_SIZE_X_Y * 2 ; i++){
+		for(int j=0 ; j < MAP_SIZE_X_Y * 2 ;j++){
+			for(int k=0 ; k < MAP_SIZE_Z * 2 ;k++){
+				if( returnReflectionRate(i,j,k) > 0.0){
+					tmp_p = TranslateIndexToRealCordinate(i,j,k);
+					if(2.5 < tmp_p.x && tmp_p.x < 3.4 && -0.3 < tmp_p.y && tmp_p.y < 0.3 && 0.015 < tmp_p.z){
+						cout << tmp_p.x << "," << tmp_p.y << "," << tmp_p.z << "," << int(voxel_map[i][j][k][REFLECT]) << "," << int(voxel_map[i][j][k][PASS]) << "," << returnReflectionRate(i,j,k) << "," << returnPenetrationRate(i,j,k) <<endl;
+					}
+				}
+			}
+		}
+	}
+
 	cout << endl;
 
 }

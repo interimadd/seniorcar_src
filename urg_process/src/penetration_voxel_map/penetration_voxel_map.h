@@ -17,7 +17,7 @@ using namespace std;
 	 設定パラメータ値
 */
 const float HORIZONTAL_RESOLUTION = 0.1;
-const float VERTICAL_RESOLUTION   = 0.01;
+const float VERTICAL_RESOLUTION   = 0.02;
 
 const int MAP_SIZE_X_Y = 50; // centerから何マス広がっているか
 const int MAP_SIZE_Z   = 50;
@@ -66,8 +66,8 @@ class PenetrationVoxelMap{
 		geometry_msgs::Point32 TranslateIndexToRealCordinate(int x_index,int y_index,int z_index);
 
 
-		vector < vector < vector < vector <int8_t> > > > voxel_map;	// [x_index][y_index][z_index][reflect/pass]
-		vector < vector < vector < vector <int8_t> > > > voxel_map_for_copy;
+		vector < vector < vector < vector <int> > > > voxel_map;	// [x_index][y_index][z_index][reflect/pass]
+		vector < vector < vector < vector <int> > > > voxel_map_for_copy;
 
 		double returnPenetrationRate(int x_index,int y_index,int z_index);
 		double returnReflectionRate(int x_index,int y_index,int z_index);

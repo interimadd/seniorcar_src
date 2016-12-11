@@ -57,6 +57,13 @@ enum ObjectMapStatus{
   ROAD    = 2,
 };
 
+enum TireIndexNumber{
+	FRONT_LEFT  = 0,
+	FRONT_RIGHT = 1,
+	BACK_LEFT	= 2,
+	BACK_RIGHT	= 3,
+};
+
 /*
 	セニアカーの転倒転落リスクをHeightMapを元に算出するためのクラス
 */
@@ -117,7 +124,7 @@ class AccidentPredictor : public ElevationMap
 		vector < vector <ObjectMapStatus> > object_map;
 		void FindObjectFromMap();
 		vector < vector <int> > collision_index;
-		void setCollisionIndex();
+		void setCollisionIndex(float yaw);
 		bool isCollision(CalculatedVehicleState vehicle_state);
 
 		bool canDrive(float pitch_angle,float roll_angle,float y_zmp);
