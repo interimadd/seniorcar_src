@@ -22,10 +22,12 @@ ros::Publisher accident_predict_pub;
 
 tf::TransformListener* listener;
 ros::Time start_time;
+ultimate_seniorcar::SeniorcarState now_state;
 
 AccidentPredictor elevation_map(0,0,150,150,0.05);
 
 void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg);
+void SeniorcarStateCallback(const ultimate_seniorcar::SeniorcarState& msg);
 void predictAccident();
 void publishResult();
 int main(int argc, char **argv);

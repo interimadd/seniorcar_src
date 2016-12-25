@@ -81,6 +81,9 @@ geometry_msgs::Point32 ElevationMap::TranslateIndexToRealCordinate(int x_index,i
 
 void ElevationMap::MoveHeightMapCenter(float pos_x,float pos_y){
 
+	pos_x = floor(pos_x);
+	pos_y = floor(pos_y);
+
 	// 複製用のvector
 	vector < vector <float> > tmp_map;
 	vector < vector < vector <float> > > tmp_variance_map;

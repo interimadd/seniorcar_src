@@ -18,6 +18,9 @@ roll  = 0
 pitch = 0
 yaw   = 0
 
+IMU_ROLL_DEFAULT_ANGLE = 0
+IMU_PITCH_DEFFULT_ANGLE = 0
+
 now_odom = Odometry()
 
 def callback(data):
@@ -28,14 +31,17 @@ def callback(data):
     global pitch
     global yaw
 
-    (roll,pitch,yaw) = euler_from_quaternion([q.x,q.y,q.z,q.w])
+    (roll,pitch,yaw) = euler_from_quaternion([q.x,q.y,q.z,q.w])  
+    #roll += math.pi + IMU_ROLL_DEFAULT_ANGLE  # rollの処理謎
+    pitch -= IMU_PITCH_DEFFULT_ANGLE
+    pitch *= -1
     #yaw   =  math.atan2(2.0 * q.x * q.y + 2.0 * q.w * q.z , q.w * q.w + q.x * q.x - q.y * q.y - q.z * q.z)
     #pitch =  math.asin( 2.0 * q.w * q.y - 2.0 * q.x * q.z)
-    #roll  =  math.atan2(2.0 * q.y * q.z + 2.0 * q.w * q.x, -q.w * q.w + q.x * q.x + q.y * q.y - q.z * q.z)
+    roll  =  math.atan2(2.0 * q.y * q.z + 2.0 * q.w * q.x, -q.w * q.w + q.x * q.x + q.y * q.y - q.z * q.z)
 
-    roll  = roll  * RAD_TO_DEG
-    pitch = pitch * RAD_TO_DEG
-    yaw   = yaw   * RAD_TO_DEG
+    #roll  = roll  * RAD_TO_DEG
+    #pitch = pitch * RAD_TO_DEG
+    #yaw   = yaw   * RAD_TO_DEG
 
 
 def odomcallback(data):

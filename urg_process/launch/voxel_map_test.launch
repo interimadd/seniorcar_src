@@ -14,7 +14,7 @@
 	<node pkg="sensor_utility" type="base_link_to_odom.py" name="base_link_to_odom"/>
 
 	<node pkg="ultimate_seniorcar" type="seniorcar_odometry.py" name="odo" output="screen">
-		<param name="steer_angle_offset" value="-1.0"/> <!-- 左に曲がりすぎでしょ→マイナスを大きく -->
+		<param name="steer_angle_offset" value="-1.5"/> <!-- 左に曲がりすぎでしょ→マイナスを大きく -->
 		<param name="calculate_3dimention_odmetry" value="true" />
 		<param name="imu_roll_offset" value="2.0" />
 	</node>
@@ -31,7 +31,7 @@
 	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" />
 	<!--<node pkg="urg_process" type="pointcloud2_to_pointcloud" name="pointcloud2_to_pointcloud" output="screen" />-->
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/transmitance_test/0per.bag --delay=0.1 --rate=0.5 --clock">
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/glass_road/1218/exp2_3.bag --delay=0.1 --rate=0.4 --clock">
 		<remap from="tf" to="tf_escape"/>
 		<remap from="tf_static" to="tf_static_escape"/>
 		<remap from="imu/data" to="imu_data_escape"/>
@@ -40,6 +40,6 @@
 
 	<node pkg="seniorcar_test" type="generate_seniorcar_comannd_to_avoid_predicted_accident.py" name="generate_seniorcar_comannd_to_avoid_predicted_accident" />
 	
-	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/elevation_map_visualize.rviz"/>
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/rviz_config/voxel_map_visualize.rviz"/>
 
 </launch> 

@@ -133,7 +133,7 @@ Visualization Manager:
       Channel Name: intensity
       Class: rviz/LaserScan
       Color: 255; 255; 255
-      Color Transformer: AxisColor
+      Color Transformer: Intensity
       Decay Time: 100
       Enabled: true
       Invert Rainbow: false
@@ -164,91 +164,19 @@ Visualization Manager:
       Topic: /seniorcar_odometry
       Value: true
     - Class: rviz/TF
-      Enabled: true
+      Enabled: false
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        back_up:
-          Value: true
-        back_up2:
-          Value: true
-        back_up3:
-          Value: true
-        base:
-          Value: true
-        base_link:
-          Value: true
-        front_up:
-          Value: true
-        front_up2:
-          Value: true
-        front_up3:
-          Value: true
-        imu:
-          Value: true
-        laser_back:
-          Value: true
-        laser_front:
-          Value: true
-        laser_tilt:
-          Value: true
-        map_center:
-          Value: true
-        odom:
-          Value: true
-        velodyne:
-          Value: true
-        wheel_back_left:
-          Value: true
-        wheel_back_right:
-          Value: true
-        wheel_front_left:
-          Value: true
-        wheel_front_right:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_link:
-            base:
-              back_up:
-                {}
-              back_up2:
-                {}
-              back_up3:
-                {}
-              front_up:
-                {}
-              front_up2:
-                {}
-              front_up3:
-                {}
-              wheel_back_left:
-                {}
-              wheel_back_right:
-                {}
-              wheel_front_left:
-                {}
-              wheel_front_right:
-                {}
-            imu:
-              {}
-            laser_back:
-              {}
-            laser_front:
-              {}
-            laser_tilt:
-              {}
-            map_center:
-              {}
-            velodyne:
-              {}
+        {}
       Update Interval: 0
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -436,14 +364,14 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.2052
+      Pitch: 0.951256
       Position:
-        X: -8.66333
-        Y: 0.774989
-        Z: 37.5898
-      Target Frame: <Fixed Frame>
+        X: -13.9355
+        Y: -2.06818
+        Z: 18.6122
+      Target Frame: base_link
       Value: FPS (rviz)
-      Yaw: 6.26778
+      Yaw: 0.148095
     Saved: ~
 Window Geometry:
   Displays:

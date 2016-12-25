@@ -242,6 +242,6 @@ add_executable(laser_point_to_voxel_map
   src/penetration_voxel_map/penetration_voxel_map.cpp
   src/laser_point_to_voxel_map.cpp
 )
-target_link_libraries(laser_point_to_elevation_map_ver2 ${catkin_LIBRARIES})
+target_link_libraries(laser_point_to_voxel_map ${catkin_LIBRARIES})
 
 

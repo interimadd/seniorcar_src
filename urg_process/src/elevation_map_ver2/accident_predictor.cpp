@@ -43,7 +43,7 @@ AccidentPredictor::AccidentPredictor(float pos_x,float pos_y,int map_size_x,int 
 	// タイヤの内どこで何を計算するかを計算しておく
 	const double TIRE_X_SPLIT_NUM = 2;
 	const double TIRE_Y_SPLIT_NUM = 1;
-	const double TIRE_CALC_MARGINE = 0.02;
+	const double TIRE_CALC_MARGINE = 0.01;
 	tire_calculation_point.resize( ( TIRE_X_SPLIT_NUM * 2 + 1 ) * (TIRE_Y_SPLIT_NUM * 2 + 1));
 	for(int i=0; i < ( TIRE_X_SPLIT_NUM * 2 + 1 ) * (TIRE_Y_SPLIT_NUM * 2 + 1) ;i++){
 		tire_calculation_point[i].resize(3);
@@ -58,14 +58,18 @@ AccidentPredictor::AccidentPredictor(float pos_x,float pos_y,int map_size_x,int 
 		}
 	}
 
+	// 定数計算
+	C_f = SENIORCAR_FRONT_SPRING_CONSTANT * SENIORCAR_TREAD_LENGTH * 0.5 / ( 0.5 * ( SENIORCAR_FRONT_SPRING_CONSTANT + SENIORCAR_BACK_SPRING_CONSTANT ) * SENIORCAR_TREAD_LENGTH * SENIORCAR_TREAD_LENGTH - SENIORCAR_WEIGHT*9.8*SENIORCAR_COG_HEIGHT) ;
+	C_b = SENIORCAR_BACK_SPRING_CONSTANT  * SENIORCAR_TREAD_LENGTH * 0.5 / ( 0.5 * ( SENIORCAR_FRONT_SPRING_CONSTANT + SENIORCAR_BACK_SPRING_CONSTANT ) * SENIORCAR_TREAD_LENGTH * SENIORCAR_TREAD_LENGTH - SENIORCAR_WEIGHT*9.8*SENIORCAR_COG_HEIGHT) ;
+	C_a = SENIORCAR_WEIGHT  / ( 0.5 * ( SENIORCAR_FRONT_SPRING_CONSTANT + SENIORCAR_BACK_SPRING_CONSTANT ) * SENIORCAR_TREAD_LENGTH * SENIORCAR_TREAD_LENGTH - SENIORCAR_WEIGHT*9.8*SENIORCAR_COG_HEIGHT) ;
 
 }
 
 
-void AccidentPredictor::predictAccident(float pos_x,float pos_y,float pos_z,float roll,float pitch,float yaw)
+void AccidentPredictor::predictAccident(float pos_x,float pos_y,float pos_z,float roll,float pitch,float yaw,float vehicle_velocity)
 {
 	//cout << endl << endl << "start predict" << endl;
-	generatePath(pos_x,pos_y,yaw); // 走行領域の更新
+	generatePath(pos_x,pos_y,yaw,vehicle_velocity); // 走行領域の更新
 
 	InterpolateMap();	// 地図の補間
 	FindObjectFromMap(); // 障害物地図の更新
@@ -105,11 +109,20 @@ void AccidentPredictor::predictAccident(float pos_x,float pos_y,float pos_z,floa
 }
 
 
-void AccidentPredictor::generatePath(float pos_x,float pos_y,float yaw)
+void AccidentPredictor::generatePath(float pos_x,float pos_y,float yaw,float vehicle_velocity)
 {
 	int X = 0;
 	int Y = 1;
 	int TH = 2;
+
+	float calculate_distance_step;
+	if(vehicle_velocity == NOT_SET){
+		calculate_distance_step = CALCULATE_DISTANCE_STEP;
+	}
+	else{
+		vehicle_velocity = max( vehicle_velocity , MIN_VHEICLE_VELOCITY );
+		calculate_distance_step = vehicle_velocity * TIME_STEP_RESOLUTION;
+	}
 
 	for(int i=0; i < DEG_CALCULTE_NUM; i++){
 		predicted_path[i][0][X] = pos_x ;
@@ -120,10 +133,10 @@ void AccidentPredictor::generatePath(float pos_x,float pos_y,float yaw)
 	for(int i=0; i < DEG_CALCULTE_NUM; i++){
 		float tmp_steer_angle = ( CALCULATE_STEER_DEG_STEP * float(i) - MAX_STEER_DEG_CHANGE ) * M_PI / 180.0;
 		for(int j=1; j < PATH_POINT_NUM; j++){
-			predicted_path[i][j][TH] = predicted_path[i][j-1][TH] + CALCULATE_DISTANCE_STEP * tan(tmp_steer_angle)  / SENIORCAR_WHEEL_BASE_LENGTH ;
+			predicted_path[i][j][TH] = predicted_path[i][j-1][TH] + calculate_distance_step * tan(tmp_steer_angle)  / SENIORCAR_WHEEL_BASE_LENGTH ;
 			float tmp_th = ( predicted_path[i][j][TH] + predicted_path[i][j-1][TH] ) / 2.0 ;
-			predicted_path[i][j][X] = predicted_path[i][j-1][X] + CALCULATE_DISTANCE_STEP * cos(tmp_th) ; 
-			predicted_path[i][j][Y] = predicted_path[i][j-1][Y] + CALCULATE_DISTANCE_STEP * sin(tmp_th) ;
+			predicted_path[i][j][X] = predicted_path[i][j-1][X] + calculate_distance_step * cos(tmp_th) ; 
+			predicted_path[i][j][Y] = predicted_path[i][j-1][Y] + calculate_distance_step * sin(tmp_th) ;
 		}
 	}
 }
@@ -273,6 +286,12 @@ bool AccidentPredictor::isFall(CalculatedVehicleState vehicle_state)
 	else{
 		higher_pos_tire_index = FRONT_RIGHT;
 		lower_pos_tire_index  = FRONT_LEFT;
+	}
+
+	// そもそも車両のピッチ角度が登坂の限界である10度を超えてたら転落するという判定
+	float estimated_vhicel_pitch_angle = abs ( atan( (vehicle_state.tire_pos[higher_pos_tire_index][2] - vehicle_state.tire_pos[higher_pos_tire_index+2][2] ) / SENIORCAR_WHEEL_BASE_LENGTH ) );
+	if( estimated_vhicel_pitch_angle > SENIORCAR_DRIVABLE_PITCH_ANGLE_THRESHOLD ){
+		return true;
 	}
 
 	float expected_lower_tire_pos_z = vehicle_state.tire_pos[higher_pos_tire_index][2] - ( vehicle_state.tire_pos[higher_pos_tire_index+2][2] + SENIORCAR_TIRE_MOVABLE_LENGHT ) + vehicle_state.tire_pos[lower_pos_tire_index+2][2] ;
@@ -448,6 +467,9 @@ void AccidentPredictor::calculateSlopeOfVehicle(CalculatedVehicleState *predicte
 
 	}
 
+	// 新しい実装
+	predicted_state->calculated_roll_angle[0] = C_f * ( predicted_state->tire_pos[FRONT_RIGHT][Z] - predicted_state->tire_pos[FRONT_LEFT][Z] ) + C_b * ( predicted_state->tire_pos[BACK_RIGHT][Z] - predicted_state->tire_pos[BACK_LEFT][Z] ) ;
+
 };
 
 float AccidentPredictor::calculateRollAngleFrom2Vectors(float vec1[3],float vec2[3]){
@@ -551,32 +573,64 @@ void AccidentPredictor::returnCalculatedVehicleState(visualization_msgs::Marker 
 	tmp_p[1].x = -TRIANGLE_LENGTH; tmp_p[1].y =  TRIANGLE_LENGTH/2.0f; 
 	tmp_p[2].x = -TRIANGLE_LENGTH; tmp_p[2].y = -TRIANGLE_LENGTH/2.0f;
 
-	for(int i=0; i < calculated_state_array.size(); i++){
+	/*
+	for(int i=0; i < DEG_CALCULTE_NUM; i++){
+		for(int j=1; j < PATH_POINT_NUM; j++){
+			CalculatedVehicleState tmp_state = calculated_state_array[ j - 1 + ( PATH_POINT_NUM - 1 ) * i ];
+			if( !tmp_state.is_collision && !tmp_state.is_fall && !tmp_state.is_rollover ){
+				rgba.r = 0.0f; rgba.g = 1.0f; rgba.b = 0.0f; rgba.a = 1.0f;
+				for(int p_i=0;p_i<3;p_i++){
+					float yaw = tmp_state.vehicle_pose[2];
+					p[p_i].x = tmp_state.vehicle_pose[0] + cos(yaw) * tmp_p[p_i].x - sin(yaw) * tmp_p[p_i].y;
+					p[p_i].y = tmp_state.vehicle_pose[1] + sin(yaw) * tmp_p[p_i].x + cos(yaw) * tmp_p[p_i].y;
+					p[p_i].z = 0;
+					triangles->points.push_back(p[p_i]);
+					triangles->colors.push_back(rgba);
+				}
+			}
+			else{
+				break;
+			}
+		}
+	}
+	*/
+
+	for(int i=0; i < DEG_CALCULTE_NUM; i++){
+		for(int j=1; j < PATH_POINT_NUM; j++){
 		
-		if( calculated_state_array[i].is_collision ){
+		int index =  j - 1 + ( PATH_POINT_NUM - 1 ) * i ;
+		if( calculated_state_array[index].is_collision ){
 			rgba.r = 1.0f; rgba.g = 0.0f; rgba.b = 0.0f; rgba.a = 1.0f;
 		}
-		else if( calculated_state_array[i].is_fall ){
-			rgba.r = 0.0f; rgba.g = 1.0f; rgba.b = 0.0f; rgba.a = 1.0f;
+		else if( calculated_state_array[index].is_fall ){
+			rgba.r = 1.0f; rgba.g = 0.0f; rgba.b = 0.0f; rgba.a = 1.0f;
 		}
-		else if( calculated_state_array[i].is_rollover ){
-			rgba.r = 0.0f; rgba.g = 1.0f; rgba.b = 0.0f; rgba.a = 1.0f;
+		else if( calculated_state_array[index].is_rollover ){
+			rgba.r = 1.0f; rgba.g = 0.0f; rgba.b = 0.0f; rgba.a = 1.0f;
 		}
 		else{
 			rgba.r = 0.0f; rgba.g = 1.0f; rgba.b = 0.0f; rgba.a = 1.0f;
 		}
 
+		if( calculated_state_array[index].is_fall ){
+			rgba.r = 0.0f; rgba.g = 0.0f; rgba.b = 1.0f; rgba.a = 1.0f;
+			//printCalculatedState(calculated_state_array[i]);
+		}
+
 		for(int p_i=0;p_i<3;p_i++){
-			float yaw = calculated_state_array[i].vehicle_pose[2];
-			p[p_i].x = calculated_state_array[i].vehicle_pose[0] + cos(yaw) * tmp_p[p_i].x - sin(yaw) * tmp_p[p_i].y;
-			p[p_i].y = calculated_state_array[i].vehicle_pose[1] + sin(yaw) * tmp_p[p_i].x + cos(yaw) * tmp_p[p_i].y;
+			float yaw = calculated_state_array[index].vehicle_pose[2];
+			p[p_i].x = calculated_state_array[index].vehicle_pose[0] + cos(yaw) * tmp_p[p_i].x - sin(yaw) * tmp_p[p_i].y;
+			p[p_i].y = calculated_state_array[index].vehicle_pose[1] + sin(yaw) * tmp_p[p_i].x + cos(yaw) * tmp_p[p_i].y;
 			p[p_i].z = 0;
 			triangles->points.push_back(p[p_i]);
 			triangles->colors.push_back(rgba);
 		}
 
+		if( i == DEG_CALCULTE_NUM / 2 ){
+			printCalculatedState(calculated_state_array[index]);
+		}
 	}
-
+	}
 }
 
 void AccidentPredictor::printCalculatedState(CalculatedVehicleState state){
@@ -591,8 +645,8 @@ void AccidentPredictor::printCalculatedState(CalculatedVehicleState state){
 	bool  is_rollover;
 } CalculatedVehicleState;
 */
-	cout << "pose:(" << state.vehicle_pose[0] << "," << state.vehicle_pose[1] << "," << state.vehicle_pose[2] << ")  " 
-	<< "wheel_height:(" << state.tire_pos[0][2] <<  "," <<  state.tire_pos[1][2] <<  "," <<  state.tire_pos[2][2] <<  "," <<  state.tire_pos[3][2] <<  ")  " 
-	<< "roll_angle:(" << state.calculated_roll_angle[0] << "," << state.calculated_roll_angle[1] << ")  " 
-	<< "fall:" << state.is_fall << "  collision:" << state.is_collision << "  rollover:" << state.is_rollover << endl;  
+	cout << "pose:(," << state.vehicle_pose[0] << "," << state.vehicle_pose[1] << "," << state.vehicle_pose[2] << ",)  " 
+	<< "wheel_height:(," << state.tire_pos[0][2] <<  "," <<  state.tire_pos[1][2] <<  "," <<  state.tire_pos[2][2] <<  "," <<  state.tire_pos[3][2] <<  ",)  " 
+	<< "roll_angle:(," << state.calculated_roll_angle[0] << "," << state.calculated_roll_angle[1] << ",)  " 
+	<< "fall:," << state.is_fall << "  collision:," << state.is_collision << "  rollover:," << state.is_rollover << endl;  
 }

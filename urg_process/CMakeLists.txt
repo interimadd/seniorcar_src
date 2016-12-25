@@ -240,6 +240,7 @@ target_link_libraries(pointcloud2_to_pointcloud.cpp  ${PCL_LIBRARIES} ${catkin_L
 
 add_executable(laser_point_to_voxel_map
   src/penetration_voxel_map/penetration_voxel_map.cpp
+  src/penetration_voxel_map/accident_predictor_for_penetration_voxel_map.cpp
   src/laser_point_to_voxel_map.cpp
 )
 target_link_libraries(laser_point_to_voxel_map ${catkin_LIBRARIES})

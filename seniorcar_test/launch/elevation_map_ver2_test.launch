@@ -31,7 +31,7 @@
 	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" output="screen"/>
 	<!--<node pkg="urg_process" type="pointcloud2_to_pointcloud" name="pointcloud2_to_pointcloud" output="screen" />-->
 
-	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/1202_railroad_crosiing/exp4_1.bag --delay=1.0 --rate=0.2 --clock">
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/predict_angle/1216_1.bag --delay=0.5 --rate=1.0 --clock">
 		<remap from="tf" to="tf_escape"/>
 		<remap from="tf_static" to="tf_static_escape"/>
 		<remap from="imu/data" to="imu_data_escape"/>

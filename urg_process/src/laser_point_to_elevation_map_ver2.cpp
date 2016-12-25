@@ -29,7 +29,7 @@ void publishResult(){
   m.getRPY(roll, pitch, yaw);
 
   //cout << transform.getOrigin().x() << "," << transform.getOrigin().y() << "," <<  transform.getOrigin().z() << "," <<  roll << "," <<  pitch << "," <<  yaw << endl;
-  elevation_map.predictAccident(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z(), roll, pitch, yaw);
+  elevation_map.predictAccident(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z(), roll, pitch, yaw,now_state.vehicle_velocity);
   
   sensor_msgs::PointCloud send_point_cloud;
   send_point_cloud.header = tmp_header;
@@ -70,6 +70,10 @@ void moveMapCenter(){
   }
 }
 
+void SeniorcarStateCallback(const ultimate_seniorcar::SeniorcarState& msg){
+  now_state = msg;
+}
+
 
 int main(int argc, char **argv)
 {
@@ -80,6 +84,7 @@ int main(int argc, char **argv)
   listener = &lr;
 
   ros::Subscriber sub = n.subscribe("laser_point", 1000, PointCloudCallback);
+  ros::Subscriber state_sub = n.subscribe("seniorcar_state", 1000, SeniorcarStateCallback);
 
   heightmap_pub = n.advertise<sensor_msgs::PointCloud>("height_map", 1000);
   marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);

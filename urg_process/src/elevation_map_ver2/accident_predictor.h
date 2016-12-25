@@ -23,15 +23,19 @@ const float CALCULATE_DISTANCE_LENGTH = 2.6;	// 何ｍ先までの領域を検�
 const float CALCULATE_STEER_DEG_STEP = 5.0;	// 操舵角度何度ごとに計算を行うか
 const float MAX_STEER_DEG_CHANGE = 30.0;	// 今の操舵角度から何度変化するところまで計算するか
 
+const float TIME_STEP_RESOLUTION = 0.25; // 矢印一個につき何秒刻みとするか
+
 const int PATH_POINT_NUM =   int( CALCULATE_DISTANCE_LENGTH / CALCULATE_DISTANCE_STEP ) + 1;	// 1つの経路を何個の点で表現するか
 const int DEG_CALCULTE_NUM = int( MAX_STEER_DEG_CHANGE * 2.0 / CALCULATE_STEER_DEG_STEP ) + 1;	// 何個の経路を生成するか
 
+const float SENIORCAR_DRIVABLE_PITCH_ANGLE_THRESHOLD = 10.0 * 3.14 / 180;
 const float DANGER_ANGLE = 0.25;  // 走れない角度
 const float DANGER_Y_ZMP = SENIORCAR_HARF_TREAD_LENGTH*2 - 0.1; // ここまでZMPが来るとまずい閾値
 
-const float MIN_VHEICLE_VELOCITY = 1.0;	//考慮する車両の最低速度
+const float MIN_VHEICLE_VELOCITY = 0.5;	//考慮する車両の最低速度
 
 const float RAD_TO_DEG = 180.0 / M_PI;
+const float NOT_SET = -100;
 
 /*
 	タイヤの位置を格納するための型
@@ -77,7 +81,7 @@ class AccidentPredictor : public ElevationMap
 			領域を走行可能か走行不可農家に識別する
 			一旦全部不可能として根本から計算していく感じ？？
 		*/
-		void predictAccident(float pos_x,float pos_y,float pos_z,float roll,float pitch,float yaw);
+		void predictAccident(float pos_x,float pos_y,float pos_z,float roll,float pitch,float yaw,float vehicle_velocity);
 
 		/*
 			外部プログラムから結果を参照する用
@@ -101,8 +105,10 @@ class AccidentPredictor : public ElevationMap
 		int half_tire_width_in_grid;
 
 		vector < vector <float> > tire_calculation_point; // [x0,y0,z0],[x1,y1,z1],[x2,y2,z2]...
+
+		float C_f,C_b,C_a;	// ロール角計算用 φ= C_f * ⊿h_f + C_b * ⊿h_b + C_a * a_y
 		
-		void generatePath(float pos_x,float pos_y,float yaw); // 予想経路更新
+		void generatePath(float pos_x,float pos_y,float yaw,float vehicle_velocity); // 予想経路更新
 		void returnTirePositionAtGivenPose(CalculatedVehicleState *return_tire_pos,vector<float> pose);
 		void calculateSlopeOfVehicle(CalculatedVehicleState *predicted_state);
 		float calculateRollAngleFrom2Vectors(float vec1[3],float vec2[3]);

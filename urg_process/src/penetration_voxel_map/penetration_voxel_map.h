@@ -16,11 +16,15 @@ using namespace std;
 /*
 	 設定パラメータ値
 */
-const float HORIZONTAL_RESOLUTION = 0.1;
-const float VERTICAL_RESOLUTION   = 0.02;
+const float HORIZONTAL_RESOLUTION = 0.05;
+const float VERTICAL_RESOLUTION   = 0.01;
 
-const int MAP_SIZE_X_Y = 50; // centerから何マス広がっているか
-const int MAP_SIZE_Z   = 50;
+const int MAP_SIZE_X_Y = 70; // centerから何マス広がっているか
+const int MAP_SIZE_Z   = 100;
+
+const float P_R_Z = 0.06;		// 反射したという情報が返ってきた時にそのグリッドが路面である確率
+const float P_R_notZ = 0.01;		// 通過したという情報が返ってきた時にそのグリッドが路面である確率
+const float P_R_DEFAULT = 0.05;	// 何も情報が得られていないときにそのグリッドが路面である確率
 
 /*
 	文字定義
@@ -35,12 +39,7 @@ class PenetrationVoxelMap{
 
 	public:
 
-		float center_x;
-		float center_y;
-		float center_z;
-
-		float last_calc_x;
-		float last_calc_y;
+		float center_x,center_y,center_z;
 
 		PenetrationVoxelMap(float pos_x,float pos_y,float pos_z);
 
@@ -65,9 +64,14 @@ class PenetrationVoxelMap{
 		*/
 		geometry_msgs::Point32 TranslateIndexToRealCordinate(int x_index,int y_index,int z_index);
 
-
 		vector < vector < vector < vector <int> > > > voxel_map;	// [x_index][y_index][z_index][reflect/pass]
 		vector < vector < vector < vector <int> > > > voxel_map_for_copy;
+
+		vector < vector < vector <float> > > voxel_odds_map;	// [x_index][y_index][z_index]
+		vector < vector < vector <float> > > voxel_odds_map_for_copy;
+		float l_0,l_occ,l_free;
+		float translatePtoLogOdds(float p);
+		float translateLogOddstoP(float log_odds);
 
 		double returnPenetrationRate(int x_index,int y_index,int z_index);
 		double returnReflectionRate(int x_index,int y_index,int z_index);
@@ -82,6 +86,8 @@ class PenetrationVoxelMap{
 			VoxelMap内のデータをプリント出力 デバッグ用
 		*/
 		void printVoxelMapData();
+
+		double returnHighestVoxeclHeightInCordinate(float position_x,float position_y);
 
 };
 
