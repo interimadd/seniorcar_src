@@ -22,7 +22,7 @@ void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg){
 
   tmp_header = msg->header;
   tmp_header.frame_id = "/odom";
-
+  
   penetration_voxel_map.RecordSensorData(laser_tilt_corfinate,*msg);
 
 }
@@ -34,7 +34,7 @@ void publishResult(){
   send_point_cloud.header = tmp_header;
   penetration_voxel_map.VoxelMapToPointCloud(&send_point_cloud);
   heightmap_pub.publish(send_point_cloud);
-  
+
 }
 
 
@@ -50,6 +50,7 @@ void moveMapCenter(){
   
   if( pow(penetration_voxel_map.center_x-transform.getOrigin().x(),2) + pow(penetration_voxel_map.center_y-transform.getOrigin().y(),2) > 1.0 ){
     penetration_voxel_map.MoveVoxelMapCenter(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
+    //penetration_voxel_map.MoveVoxelMapCenter(transform.getOrigin().x(), transform.getOrigin().y(), 0); // Z座標を固定しておく
   }
 
 }
@@ -80,17 +81,16 @@ void predictTest(){
   visualization_msgs::Marker marker,marker2;
   marker.header.stamp = marker2.header.stamp = ros::Time::now();
 
-  /*
   PredictResult predict_result = penetration_voxel_map.returnPredictResult();
   ultimate_seniorcar::AccidentPredictResult result_for_pub;
-  cout << "start" << endl;
   for(int i = 0; i < DEG_CALCULTE_NUM ; i++){
-    cout << "steer_angle:" << predict_result.steer_angle[i] << "  max_distance:"<< predict_result.max_distance_to_go[i] << endl;
     result_for_pub.steer_angle.push_back(predict_result.steer_angle[i]);
     result_for_pub.max_distance.push_back(predict_result.max_distance_to_go[i]);
   }
   accident_predict_pub.publish(result_for_pub);
-  */
+
+  penetration_voxel_map.returnCalculatedVehicleState(&marker);
+  marker_pub.publish(marker);
 
 }
 
@@ -112,6 +112,7 @@ int main(int argc, char **argv)
 
   heightmap_pub = n.advertise<sensor_msgs::PointCloud>("height_map", 1000);
   accident_predict_pub = n.advertise<ultimate_seniorcar::AccidentPredictResult>("accident_predict",10);
+  marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
 
   ros::Rate loop_rate(50);
   
@@ -120,7 +121,7 @@ int main(int argc, char **argv)
       predictTest();
       publishResult();
     }
-    if( step_count % 100 == 0){
+    if( step_count % 10 == 0){
       moveMapCenter();
     }
     step_count++;

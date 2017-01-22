@@ -13,6 +13,8 @@
 
 using namespace std;
 
+const int RECOAR_DATA_UPDATE_STRATEGY = 0; //0:そのまま 1：低い方
+
 const float NOT_DETECT = -100.0;
 
 /*

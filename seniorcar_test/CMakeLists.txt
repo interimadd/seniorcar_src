@@ -186,3 +186,6 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+add_executable(seniorcar_path_marker_pub src/seniorcar_path_marker_pub.cpp)
+target_link_libraries(seniorcar_path_marker_pub  ${catkin_LIBRARIES})

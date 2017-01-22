@@ -19,7 +19,7 @@
 	各種パラメータ
 */
 const float CALCULATE_DISTANCE_STEP = 0.2;	// 何ｍ刻みで領域を評価するのか
-const float CALCULATE_DISTANCE_LENGTH = 2.6;	// 何ｍ先までの領域を検出するのか
+const float CALCULATE_DISTANCE_LENGTH = 3.6;	// 何ｍ先までの領域を検出するのか
 
 const float CALCULATE_STEER_DEG_STEP = 5.0;	// 操舵角度何度ごとに計算を行うか
 const float MAX_STEER_DEG_CHANGE = 30.0;	// 今の操舵角度から何度変化するところまで計算するか
@@ -28,6 +28,8 @@ const float TIME_STEP_RESOLUTION = 0.25; // 矢印一個につき何秒刻みと
 
 const int PATH_POINT_NUM =   int( CALCULATE_DISTANCE_LENGTH / CALCULATE_DISTANCE_STEP ) + 1;	// 1つの経路を何個の点で表現するか
 const int DEG_CALCULTE_NUM = int( MAX_STEER_DEG_CHANGE * 2.0 / CALCULATE_STEER_DEG_STEP ) + 1;	// 何個の経路を生成するか
+
+const int CALC_LOOP_NUM = 10; // 1つの予測通過点に対し何回計算するか
 
 const float SENIORCAR_DRIVABLE_PITCH_ANGLE_THRESHOLD = 10.0 * 3.14 / 180;
 const float DANGER_ANGLE = 0.25;  // 走れない角度
@@ -45,11 +47,12 @@ typedef struct{
 	float vehicle_pose[3];			// 車両原点位置位置(x,y,th)
 	float tire_pos[4][4];			// 車輪位置座標((x,y,z,th)*4)
 	float tire_height_probability_density[4][MAP_SIZE_Z*2];   // 車輪高さを確率密度分布で表したいときのやつ
-	float calculated_roll_angle[2];	// 車輪位置から計算された車両の傾き（基本三点接地なので2通りある）
-	float calculated_pitch_angle[2];
+	float calculated_roll_angle;	// 車輪位置から計算された車両の傾き
+	float calculated_pitch_angle;
 	bool  is_fall;
 	bool  is_collision;
 	bool  is_rollover;
+	float accident_rate;
 } CalculatedVehicleState;
 
 typedef struct{
@@ -93,7 +96,6 @@ class AccidentPredictor : public PenetrationVoxelMap
 		/*
 			可視化関連
 		*/
-		void returnObjectMapPointsMarker(visualization_msgs::Marker *points);
 		void returnCalculatedVehicleState(visualization_msgs::Marker *triangles);
 
 	private:
@@ -110,8 +112,6 @@ class AccidentPredictor : public PenetrationVoxelMap
 		void generatePath(float pos_x,float pos_y,float yaw,float vehicle_velocity); // 予想経路更新
 		void returnTirePositionAtGivenPose(CalculatedVehicleState *return_tire_pos,vector<float> pose);
 		void calculateSlopeOfVehicle(CalculatedVehicleState *predicted_state);
-		float calculateRollAngleFrom2Vectors(float vec1[3],float vec2[3]);
-		float calculatePitchAngleFrom2Vectors(float vec1[3],float vec2[3]);
 
 		/*
 			vehicle stateにおけるy方向の最大のZMP位置の絶対値を返す
@@ -124,27 +124,26 @@ class AccidentPredictor : public PenetrationVoxelMap
 		bool isFall(CalculatedVehicleState vehicle_state);
 
 		/*
-			障害物との衝突判定
+			前輪の接地高さが前のステップから段差高さ以上に高くなっていると走行できない判定
 		*/
-		vector < vector <ObjectMapStatus> > object_map;
-		void FindObjectFromMap();
-		vector < vector <int> > collision_index;
-		void setCollisionIndex(float yaw);
-		bool isCollision(CalculatedVehicleState vehicle_state);
+		bool isCollisionByTirePos(CalculatedVehicleState state_now,CalculatedVehicleState state_old);
 
-		bool canDrive(float pitch_angle,float roll_angle,float y_zmp);
 		double returnTireHeightAtGivenPositionAndPose(double x_pos,double y_pos,double tire_theta);
 
 		// 車輪の高さを確率密度関数で計算するやつ
 		void calculateTireHeightProbabilityDensity(CalculatedVehicleState *return_tire_height);
 		// 車輪の高さを確率密度関数を基にランダムサンプリングしてtire_pos[Z]に代入する
 		void randomSamplingTireHeighrByPropanilityDensity(CalculatedVehicleState *return_tire_height);
+		// 車輪の高さを確率密度関数の中で最も確率が高い高さをtire_pos[Z]に代入する
+		void mostLikelyTireHeightByPropanilityDensity(CalculatedVehicleState *return_tire_height);
 
 		/*
 			テスト用
 		*/
 		void printCalculatedState(CalculatedVehicleState state);
 		void printTireHeightPropabilityDensity();
+		void printFrontLeftTirePropabilityDensity();
+		void printPredictedVehicleAngle();
 
 };
 

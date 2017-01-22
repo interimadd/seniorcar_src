@@ -30,6 +30,7 @@ void publishResult(){
 
   //cout << transform.getOrigin().x() << "," << transform.getOrigin().y() << "," <<  transform.getOrigin().z() << "," <<  roll << "," <<  pitch << "," <<  yaw << endl;
   elevation_map.predictAccident(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z(), roll, pitch, yaw,now_state.vehicle_velocity);
+  //elevation_map.predictAccident(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z(), roll, pitch, yaw,NOT_SET);
   
   sensor_msgs::PointCloud send_point_cloud;
   send_point_cloud.header = tmp_header;
@@ -38,16 +39,16 @@ void publishResult(){
 
   visualization_msgs::Marker marker,marker2;
   marker.header.stamp = marker2.header.stamp = ros::Time::now();
-  elevation_map.returnObjectMapPointsMarker(&marker2);
+  //elevation_map.returnObjectMapPointsMarker(&marker2);
   elevation_map.returnCalculatedVehicleState(&marker);
   marker_pub.publish(marker);
-  marker_pub.publish(marker2);
+  //marker_pub.publish(marker2);
 
   PredictResult predict_result = elevation_map.returnPredictResult();
   ultimate_seniorcar::AccidentPredictResult result_for_pub;
-  cout << "start" << endl;
+  //cout << "start" << endl;
   for(int i = 0; i < DEG_CALCULTE_NUM ; i++){
-    cout << "steer_angle:" << predict_result.steer_angle[i] << "  max_distance:"<< predict_result.max_distance_to_go[i] << endl;
+    //cout << "steer_angle:" << predict_result.steer_angle[i] << "  max_distance:"<< predict_result.max_distance_to_go[i] << endl;
     result_for_pub.steer_angle.push_back(predict_result.steer_angle[i]);
     result_for_pub.max_distance.push_back(predict_result.max_distance_to_go[i]);
   }

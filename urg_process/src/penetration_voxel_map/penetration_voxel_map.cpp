@@ -49,7 +49,7 @@ PenetrationVoxelMap::PenetrationVoxelMap(float pos_x,float pos_y,float pos_z){
 	l_0 = translatePtoLogOdds(P_R_DEFAULT);
 	l_occ = translatePtoLogOdds(P_R_Z);
 	l_free = translatePtoLogOdds(P_R_notZ);
-	cout << "l_0:" << P_R_DEFAULT << l_0 << ",l_occ:" << l_occ << ",l_free:" << l_free << endl;
+	cout << "l_0:" << l_0 << ",l_occ:" << l_occ << ",l_free:" << l_free << endl;
 
 	voxel_odds_map.resize(MAP_SIZE_X_Y*2);
 	voxel_odds_map_for_copy.resize(MAP_SIZE_X_Y*2);
@@ -87,7 +87,8 @@ void PenetrationVoxelMap::RecordSensorData( geometry_msgs::Point LRFcoordinate ,
 	int now_calc_index[3],last_calc_index[3];
 	double separated_vector_to_reflected_index[3];
 	int separated_num = 1;
-	int mergine_num   = 0.02 / VERTICAL_RESOLUTION + 2 ; //  レーザの計測誤差を考慮して通過カウントを少し前で切る
+	//int mergine_num   = 0.02 / VERTICAL_RESOLUTION + 2 ; //  レーザの計測誤差を考慮して通過カウントを少し前で切る
+	int mergine_num = 0.02 / VERTICAL_RESOLUTION ;
 
 	for(int i=0;i<DATA_NUM;i++){
 		TranslateRealCordinateToIndex(laser_reflect_index ,laser_point_data.points[i].x,laser_point_data.points[i].y,laser_point_data.points[i].z);
@@ -172,7 +173,7 @@ void PenetrationVoxelMap::VoxelMapToPointCloud(sensor_msgs::PointCloud *out){
 	sensor_msgs::ChannelFloat32 channel_tmp;
 	channel_tmp.name = "intensity";
 
-	float threshold = translatePtoLogOdds(0.9);
+	float threshold = translatePtoLogOdds(0.1);
 
 	for(int i=0 ; i < MAP_SIZE_X_Y * 2 ; i++){
 		for(int j=0 ; j < MAP_SIZE_X_Y * 2 ;j++){

@@ -40,7 +40,14 @@ void ElevationMap::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 		if( 0 <= num_x && num_x < MAP_SIZE_X * 2 ){
 			num_y = int( float(MAP_SIZE_Y) + ( laser_point_data.points[i].y - center_y ) / HORIZONTAL_RESOLUTION );
 			if( 0 <= num_y && num_y < MAP_SIZE_Y * 2 ){
-				height_map[num_x][num_y] = laser_point_data.points[i].z;
+				if(RECOAR_DATA_UPDATE_STRATEGY==0){
+					height_map[num_x][num_y] = laser_point_data.points[i].z;
+				}
+				else if(RECOAR_DATA_UPDATE_STRATEGY==1){
+					if( height_map[num_x][num_y] > laser_point_data.points[i].z || height_map[num_x][num_y] == NOT_DETECT ){
+						height_map[num_x][num_y] = laser_point_data.points[i].z;
+					}
+				}
 			}
 		}
 	}

@@ -21,18 +21,20 @@ COV_MATRIX = [1e-3, 0.0, 0.0, 0.0, 0.0, 0.0,
               0.0, 0.0, 0.0, 0.0, 1e-6, 0.0, 
               0.0, 0.0, 0.0, 0.0, 0.0, 1e3]
 WHEEL_BASE = 0.9 # 車体のホイールベース
+HALF_TREAD_LENGTH = 0.57 / 2.0
 #RIGHT_TURN_MAGNIFICATION = 1.04267 # 右旋回時に実際の値より1.05倍程度になることから補正
 #LEFT_TURN_MAGNIFICATION  = 0.95674 # 左旋回時に実際の値より0.95倍程度になることから補正
 RIGHT_TURN_MAGNIFICATION = 1.1
 LEFT_TURN_MAGNIFICATION = 1.1
 
 IMU_PITCH_DEFFULT_ANGLE = -1.0
-IMU_ROLL_DEFAULT_ANGLE  = 2.0
+IMU_ROLL_DEFAULT_ANGLE  = 5.0
 
 
 class OdometryCalculator:
 
     odometry = Odometry()
+    position_z_temp = 0.0
     seniorcar_command = SeniorcarState()
     t = 0
     imu_pitch = 0
@@ -52,6 +54,9 @@ class OdometryCalculator:
         self.odometry.child_frame_id  = "base_link"
         self.odometry.pose.covariance  = COV_MATRIX
         self.odometry.twist.covariance = COV_MATRIX
+        self.odometry.pose.pose.position.x = 0
+        self.odometry.pose.pose.position.y = 0
+        self.odometry.pose.pose.position.z = 0
         self.odometry.pose.pose.orientation = Quaternion(*tf.transformations.quaternion_from_euler(0, 0, 0))
 
         global CALCULATE_3DIMENTION_ODOMETRY
@@ -69,6 +74,10 @@ class OdometryCalculator:
         self.current_time = rospy.get_rostime()
         dt = self.current_time.to_sec() - self.last_time.to_sec()
         self.odometry.header.stamp = self.current_time
+
+        # dt=1400000とかになったりするので
+        if dt > 1.0:
+            dt =0
 
         if data.direction_switch == 0:
             data.vehicle_velocity = -1.0 * data.vehicle_velocity
@@ -94,12 +103,13 @@ class OdometryCalculator:
 
             self.odometry.pose.pose.position.x += v * dt * math.cos(yaw + deltaTheta/2.0) * math.cos(self.imu_pitch) 
             self.odometry.pose.pose.position.y += v * dt * math.sin(yaw + deltaTheta/2.0) * math.cos(self.imu_pitch) 
-            self.odometry.pose.pose.position.z -= v * dt * math.sin(self.imu_pitch) 
+            self.position_z_temp -= v * dt * math.sin(self.imu_pitch) 
+            self.odometry.pose.pose.position.z  = self.position_z_temp  #+ HALF_TREAD_LENGTH * abs(math.sin(self.imu_pitch))
             self.odometry.twist.twist.linear.x  = v * math.cos(yaw) 
             self.odometry.twist.twist.linear.y  = v * math.sin(yaw) 
             self.odometry.twist.twist.linear.z  = v * ( math.sin(yaw + deltaTheta/2.0) * math.sin(self.imu_roll) - math.cos(self.imu_roll) * math.sin(self.imu_pitch) * math.cos(yaw + deltaTheta/2.0) )
             self.odometry.twist.twist.angular.z = w
-            self.odometry.pose.pose.orientation = Quaternion(*tf.transformations.quaternion_from_euler(self.imu_roll , self.imu_pitch, yaw + deltaTheta))
+            self.odometry.pose.pose.orientation = Quaternion(*tf.transformations.quaternion_from_euler(self.imu_roll , self.imu_pitch, yaw + deltaTheta)) 
 
         else:
 
@@ -135,6 +145,6 @@ class OdometryCalculator:
 
 
 if __name__ == '__main__':
-    
+
     calculator = OdometryCalculator()
     calculator.publish_loop()

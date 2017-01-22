@@ -18,21 +18,21 @@
 	各種パラメータ
 */
 const float CALCULATE_DISTANCE_STEP = 0.2;	// 何ｍ刻みで領域を評価するのか
-const float CALCULATE_DISTANCE_LENGTH = 2.6;	// 何ｍ先までの領域を検出するのか
+const float CALCULATE_DISTANCE_LENGTH = 3.0;	// 何ｍ先までの領域を検出するのか
 
 const float CALCULATE_STEER_DEG_STEP = 5.0;	// 操舵角度何度ごとに計算を行うか
 const float MAX_STEER_DEG_CHANGE = 30.0;	// 今の操舵角度から何度変化するところまで計算するか
 
-const float TIME_STEP_RESOLUTION = 0.25; // 矢印一個につき何秒刻みとするか
+const float TIME_STEP_RESOLUTION = 0.1; // 矢印一個につき何秒刻みとするか
 
 const int PATH_POINT_NUM =   int( CALCULATE_DISTANCE_LENGTH / CALCULATE_DISTANCE_STEP ) + 1;	// 1つの経路を何個の点で表現するか
 const int DEG_CALCULTE_NUM = int( MAX_STEER_DEG_CHANGE * 2.0 / CALCULATE_STEER_DEG_STEP ) + 1;	// 何個の経路を生成するか
 
 const float SENIORCAR_DRIVABLE_PITCH_ANGLE_THRESHOLD = 10.0 * 3.14 / 180;
-const float DANGER_ANGLE = 0.25;  // 走れない角度
+const float SENIORCAR_DRIVABLE_ROLL_ANGLE_THRESHOLD = 10.0 * 3.14 / 180;
 const float DANGER_Y_ZMP = SENIORCAR_HARF_TREAD_LENGTH*2 - 0.1; // ここまでZMPが来るとまずい閾値
 
-const float MIN_VHEICLE_VELOCITY = 0.5;	//考慮する車両の最低速度
+const float MIN_VHEICLE_VELOCITY = 1.0;	//考慮する車両の最低速度
 
 const float RAD_TO_DEG = 180.0 / M_PI;
 const float NOT_SET = -100;
@@ -43,8 +43,8 @@ const float NOT_SET = -100;
 typedef struct{
 	float vehicle_pose[3];			// 車両原点位置位置(x,y,th)
 	float tire_pos[4][4];			// 車輪位置座標((x,y,z,th)*4)
-	float calculated_roll_angle[2];	// 車輪位置から計算された車両の傾き（基本三点接地なので2通りある）
-	float calculated_pitch_angle[2];
+	float calculated_roll_angle[3];	// 車輪位置から計算された車両の傾き（基本三点接地なので2通りある）
+	float calculated_pitch_angle[3];
 	bool  is_fall;
 	bool  is_collision;
 	bool  is_rollover;
@@ -132,6 +132,7 @@ class AccidentPredictor : public ElevationMap
 		vector < vector <int> > collision_index;
 		void setCollisionIndex(float yaw);
 		bool isCollision(CalculatedVehicleState vehicle_state);
+		bool isCollisionByTirePos(CalculatedVehicleState state_now,CalculatedVehicleState state_old);
 
 		bool canDrive(float pitch_angle,float roll_angle,float y_zmp);
 		float returnTireHeightInGrid(int x_index,int y_index);
@@ -141,6 +142,8 @@ class AccidentPredictor : public ElevationMap
 			テスト用
 		*/
 		void printCalculatedState(CalculatedVehicleState state);
+		void printPredictedFrontLeftTireHeight();
+		void printPredictedVehicleAngle();
 
 };
 
