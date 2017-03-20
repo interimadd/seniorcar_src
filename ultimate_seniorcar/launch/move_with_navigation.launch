@@ -1,24 +1,18 @@
 <launch>
 
-	<!-- USBポート番号の定義 -->
-	
-	<arg name="frontLRF_port"      value="/dev/ttyACM4"/>
+    <!-- USBポート番号の定義 -->
+    <arg name="frontLRF_port"      value="/dev/ttyACM4"/>
     <arg name="front_tiltLRF_port" value="/dev/ttyACM2"/>
     <arg name="backLRF_port"       value="/dev/ttyACM3"/>
     <arg name="imu_port"           value="/dev/ttyACM1"/>
     <arg name="steer_motor_port"   value="/dev/ttyACM0"/>
     <arg name="canusb_port"        value="/dev/ttyUSB0"/>
 
+    <!-- 地図ファイルのパス、ウェイポイントの記録されたファイルのパス -->
     <arg name="map_path"           value="/media/ishikawa/DATAPART1/HDD/bagfiles/kashiwa_campus/map.yaml"/>
     <param name="waypoint_fole_path" value="/home/ishikawa/waypoint.txt"/>
 
-	<!-- 各種センサへの接続 -->
-    <!--
-    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter">
-        <param name="canusb_port" value="$(arg canusb_port)"/>
-    </node>
-    -->
-    
+    <!-- 各種センサへの接続 -->    
     <include file="$(find ultimate_seniorcar)/launch_xml/hokuyo_lidar.xml"> 
     	<arg name="frontLRF_port"       value="$(arg frontLRF_port)"/> 
         <arg name="front_tiltLRF_port"  value="$(arg front_tiltLRF_port)"/> 
@@ -38,23 +32,22 @@
     <include file="$(find ultimate_seniorcar)/launch_xml/navigation.xml" >
         <arg name="map_path" value="$(arg map_path)"/>
     </include>
-
     
-    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel.xml">
+    <include file="$(find ultimate_seniorcar)/launch_xml/archive_cmd_vel2.xml">
         <arg name="steer_motor_port" value="$(arg steer_motor_port)"/>
     </include>
 
     <include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
     
-    <!-- おまけ -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ultimate_seniorcar)/launch_xml/map_and_seniorcar_visualize.rviz"/>
+    <!-- rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ultimate_seniorcar)/launch_xml/rviz_config/map_and_seniorcar_visualize.rviz"/>
 
 </launch>
 
 
 <!-- 指令値を送る場合は電源がオフの状態からスタートすること -->
-<!-- launchファイル立ち上げの前に以下のノードを立ち上げておく -->
-<!-- rosrun ultimate_seniorcar canusb_connecter.py -->
+<!-- launchファイル立ち上げの前に以下のラウンチファイルを立ち上げておく -->
+<!-- roslaunch ultimate_seniorcar seniorcar_canusb.py -->
 <!-- その後電源をつけること -->
 
 <!-- 一度行った道をなぞるためのノード -->

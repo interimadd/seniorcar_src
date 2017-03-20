@@ -12,13 +12,17 @@ class DetectObject:
 
     def __init__(self):
 
+        # 初期化処理
         rospy.init_node('detect_object', anonymous=True)
-        rospy.Subscriber("scan_front", LaserScan, self.callback)
         self.is_detect_object.data = False
+
+        # LRF情報をSubscribe  障害物の有無をPublish
+        rospy.Subscriber("scan_front", LaserScan, self.callback)
         self.pub = rospy.Publisher('detect_front_object',Bool, queue_size=1000)
 
     def callback(self,data):
 
+        # 設定した範囲内にある点群の数をカウントし、点が4つ以上あれば障害物があると判定
         data_num = len(data.ranges)
         obj_count = 0
 

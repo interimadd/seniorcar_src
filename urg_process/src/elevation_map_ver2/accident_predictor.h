@@ -18,18 +18,18 @@
 	各種パラメータ
 */
 const float CALCULATE_DISTANCE_STEP = 0.2;	// 何ｍ刻みで領域を評価するのか
-const float CALCULATE_DISTANCE_LENGTH = 3.0;	// 何ｍ先までの領域を検出するのか
+const float CALCULATE_DISTANCE_LENGTH = 6.0;	// 何ｍ先までの領域を検出するのか
 
 const float CALCULATE_STEER_DEG_STEP = 5.0;	// 操舵角度何度ごとに計算を行うか
-const float MAX_STEER_DEG_CHANGE = 30.0;	// 今の操舵角度から何度変化するところまで計算するか
+const float MAX_STEER_DEG_CHANGE = 35.0;	// 今の操舵角度から何度変化するところまで計算するか
 
 const float TIME_STEP_RESOLUTION = 0.1; // 矢印一個につき何秒刻みとするか
 
 const int PATH_POINT_NUM =   int( CALCULATE_DISTANCE_LENGTH / CALCULATE_DISTANCE_STEP ) + 1;	// 1つの経路を何個の点で表現するか
 const int DEG_CALCULTE_NUM = int( MAX_STEER_DEG_CHANGE * 2.0 / CALCULATE_STEER_DEG_STEP ) + 1;	// 何個の経路を生成するか
 
-const float SENIORCAR_DRIVABLE_PITCH_ANGLE_THRESHOLD = 10.0 * 3.14 / 180;
-const float SENIORCAR_DRIVABLE_ROLL_ANGLE_THRESHOLD = 10.0 * 3.14 / 180;
+const float SENIORCAR_DRIVABLE_PITCH_ANGLE_THRESHOLD = 15.0 * 3.14 / 180;
+const float SENIORCAR_DRIVABLE_ROLL_ANGLE_THRESHOLD = 15.0 * 3.14 / 180;
 const float DANGER_Y_ZMP = SENIORCAR_HARF_TREAD_LENGTH*2 - 0.1; // ここまでZMPが来るとまずい閾値
 
 const float MIN_VHEICLE_VELOCITY = 1.0;	//考慮する車両の最低速度

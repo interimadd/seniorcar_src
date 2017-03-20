@@ -29,7 +29,7 @@ const float TIME_STEP_RESOLUTION = 0.25; // 矢印一個につき何秒刻みと
 const int PATH_POINT_NUM =   int( CALCULATE_DISTANCE_LENGTH / CALCULATE_DISTANCE_STEP ) + 1;	// 1つの経路を何個の点で表現するか
 const int DEG_CALCULTE_NUM = int( MAX_STEER_DEG_CHANGE * 2.0 / CALCULATE_STEER_DEG_STEP ) + 1;	// 何個の経路を生成するか
 
-const int CALC_LOOP_NUM = 10; // 1つの予測通過点に対し何回計算するか
+const int CALC_LOOP_NUM = 1; // 1つの予測通過点に対し何回計算するか
 
 const float SENIORCAR_DRIVABLE_PITCH_ANGLE_THRESHOLD = 10.0 * 3.14 / 180;
 const float DANGER_ANGLE = 0.25;  // 走れない角度

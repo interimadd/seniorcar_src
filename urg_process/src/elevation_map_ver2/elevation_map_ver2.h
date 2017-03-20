@@ -13,7 +13,7 @@
 
 using namespace std;
 
-const int RECOAR_DATA_UPDATE_STRATEGY = 0; //0:そのまま 1：低い方
+const int RECOAR_DATA_UPDATE_STRATEGY = 1; //0:そのまま 1：低い方
 
 const float NOT_DETECT = -100.0;
 
@@ -26,6 +26,7 @@ class ElevationMap{
 
 		float center_x;
 		float center_y;
+		float center_z;
 
 		float last_calc_x;
 		float last_calc_y;
@@ -41,6 +42,8 @@ class ElevationMap{
 			HeightMapの中心座標を移動させる,
 		*/
 		void MoveHeightMapCenter(float pos_x,float pos_y);
+
+		void MoveHeightMapZ(float pos_z);
 
 		/*
 			マップの隙間を補完する

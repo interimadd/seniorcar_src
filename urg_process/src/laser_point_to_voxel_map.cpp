@@ -48,7 +48,7 @@ void moveMapCenter(){
   }
 
   
-  if( pow(penetration_voxel_map.center_x-transform.getOrigin().x(),2) + pow(penetration_voxel_map.center_y-transform.getOrigin().y(),2) > 1.0 ){
+  if( pow(penetration_voxel_map.center_x-int(transform.getOrigin().x()),2) + pow(penetration_voxel_map.center_y-int(transform.getOrigin().y()),2) > 1.0 ){
     penetration_voxel_map.MoveVoxelMapCenter(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
     //penetration_voxel_map.MoveVoxelMapCenter(transform.getOrigin().x(), transform.getOrigin().y(), 0); // Z座標を固定しておく
   }
@@ -83,6 +83,7 @@ void predictTest(){
 
   PredictResult predict_result = penetration_voxel_map.returnPredictResult();
   ultimate_seniorcar::AccidentPredictResult result_for_pub;
+
   for(int i = 0; i < DEG_CALCULTE_NUM ; i++){
     result_for_pub.steer_angle.push_back(predict_result.steer_angle[i]);
     result_for_pub.max_distance.push_back(predict_result.max_distance_to_go[i]);

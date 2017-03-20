@@ -34,6 +34,6 @@
     <include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
     
     <!-- おまけ -->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ultimate_seniorcar)/launch_xml/seniorcar_visualize.rviz"/>
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find ultimate_seniorcar)/launch_xml/rviz_config/seniorcar_visualize.rviz"/>
 
 </launch>

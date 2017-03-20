@@ -30,7 +30,6 @@ LEFT_TURN_MAGNIFICATION = 1.1
 IMU_PITCH_DEFFULT_ANGLE = -1.0
 IMU_ROLL_DEFAULT_ANGLE  = 5.0
 
-
 class OdometryCalculator:
 
     odometry = Odometry()

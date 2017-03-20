@@ -28,6 +28,7 @@ void publishResult(){
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
 
+  
   //cout << transform.getOrigin().x() << "," << transform.getOrigin().y() << "," <<  transform.getOrigin().z() << "," <<  roll << "," <<  pitch << "," <<  yaw << endl;
   elevation_map.predictAccident(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z(), roll, pitch, yaw,now_state.vehicle_velocity);
   //elevation_map.predictAccident(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z(), roll, pitch, yaw,NOT_SET);
@@ -37,6 +38,7 @@ void publishResult(){
   elevation_map.HeightMapToPointCloud(&send_point_cloud);
   heightmap_pub.publish(send_point_cloud);
 
+  
   visualization_msgs::Marker marker,marker2;
   marker.header.stamp = marker2.header.stamp = ros::Time::now();
   //elevation_map.returnObjectMapPointsMarker(&marker2);
@@ -53,7 +55,7 @@ void publishResult(){
     result_for_pub.max_distance.push_back(predict_result.max_distance_to_go[i]);
   }
   accident_predict_pub.publish(result_for_pub);
-  
+   
 }
 
 
@@ -66,8 +68,10 @@ void moveMapCenter(){
     ROS_ERROR("%s",ex.what());
   }
 
-  if( pow(elevation_map.center_x-transform.getOrigin().x(),2) + pow(elevation_map.center_y-transform.getOrigin().y(),2) > 1.0 ){
+  if( pow(elevation_map.center_x-int(transform.getOrigin().x()),2) + pow(elevation_map.center_y-int(transform.getOrigin().y()),2) > 3.0 ){
+    cout << "newmapcenter" << transform.getOrigin().x() << "," <<transform.getOrigin().y() << "," <<  pow(elevation_map.center_x-transform.getOrigin().x(),2) + pow(elevation_map.center_y-transform.getOrigin().y(),2) << "," << elevation_map.center_x << "," << elevation_map.center_y << endl;
     elevation_map.MoveHeightMapCenter(transform.getOrigin().x(), transform.getOrigin().y());
+    elevation_map.MoveHeightMapZ(transform.getOrigin().z());
   }
 }
 

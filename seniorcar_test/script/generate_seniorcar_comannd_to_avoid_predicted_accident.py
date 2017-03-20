@@ -8,10 +8,10 @@ from ultimate_seniorcar.msg import SeniorcarState
 
 PUBLISH_RATE = 50.0       # コマンドをパブリッシュする周期
 
-APPROACH_THRESHOLD = 2.5  # 何mまで危険な領域に直進で接近させるか
-AVOID_THRESHOLD = 3.0     # 避けるとしたら何mまで余裕がある角度か
+APPROACH_THRESHOLD = 3.9  # 何mまで危険な領域に直進で接近させるか
+AVOID_THRESHOLD = 4.5     # 避けるとしたら何mまで余裕がある角度か
 
-GO_STRAIGHT_TIME = 8.0    # 真っ直ぐに進む時間
+GO_STRAIGHT_TIME = 9.0    # 真っ直ぐに進む時間
 
 
 class AvoidPredictedAccident:
@@ -34,7 +34,7 @@ class AvoidPredictedAccident:
 
 		if msg.max_distance[steer0deg_index] > APPROACH_THRESHOLD:
 			# 前方1mが安全なら直進
-			self.seniorcar_command.accel_opening = 120
+			self.seniorcar_command.accel_opening = 90
 			self.seniorcar_command.steer_angle   = 0
 		else:
 			# 1.5m先まで走行できる経路の中で0degに近い場所を探す。そもそも無ければ停止する
@@ -45,16 +45,16 @@ class AvoidPredictedAccident:
 						avoid_index = i
 			if avoid_index == -1:
 				self.seniorcar_command.accel_opening = 0
-				self.seniorcar_command.steer_angle   = 0
+				#self.seniorcar_command.steer_angle   = 0
 			else:
-				self.seniorcar_command.accel_opening = 120
-				self.seniorcar_command.steer_angle   = msg.steer_angle[avoid_index] * 180.0 /3.14 
+				self.seniorcar_command.accel_opening = 90
+				self.seniorcar_command.steer_angle   = msg.steer_angle[avoid_index]  * 180.0 /3.14 
 
 	def comannd_to_go_straight(self):
 		count = 0
 		rate = rospy.Rate(PUBLISH_RATE)
 		while not rospy.is_shutdown() and count < GO_STRAIGHT_TIME * PUBLISH_RATE:
-			self.seniorcar_command.accel_opening = 120
+			self.seniorcar_command.accel_opening = 90
 			self.seniorcar_command.steer_angle = 0
 			self.pub.publish(self.seniorcar_command)
 			count += 1

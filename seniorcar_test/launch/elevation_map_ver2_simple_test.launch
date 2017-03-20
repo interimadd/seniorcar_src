@@ -1,0 +1,30 @@
+<launch>
+
+	<param name="use_sim_time" value="true"/>
+
+
+	<node pkg="tf" type="static_transform_publisher" name="base_link_to_map_center" args="1.5 0.0 0.0 0.0 0.0 0.0 /base_link /map_center 40" />
+	
+	<include file="$(find ultimate_seniorcar)/launch_xml/seniorcar_urdf.xml"/>
+
+	<node pkg="urg_process" type="laser_point_to_elevation_map_ver2" name="laser_point_to_elevation_map" output="screen"/>
+	<!--<node pkg="urg_process" type="laser_point_to_voxel_map" name="laser_point_to_voxel_map" output="screen"/>-->
+
+	
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" output="screen">
+		<param name="tilt_laser_topic" value="scan_rocker"/>
+	</node>
+
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point2" output="screen">
+		<param name="tilt_laser_topic" value="scan_tilt"/>
+		<param name="height_compensation_value" value="-0.02" />
+	</node>
+
+	<node pkg="rosbag" type="play" name="play" args="/media/ishikawa/DATAPART1/HDD/bagfiles/LRF_rocker_test/rocker_exp3.bag  --delay=2.0 --rate=1.0 --clock"/>
+
+	<node pkg="seniorcar_test" type="avoid_predicted_accident_with_users_operation.py" name="avoid_predicted_accident_with_users_operation" output="screen"/>
+	<node pkg="seniorcar_test" type="seniorcar_path_marker_pub" name="seniorcar_path_marker_pub" output="screen"/>
+	
+	<node pkg="rviz" type="rviz" name="rviz" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/elevation_map_visualize.rviz"/>
+
+</launch> 

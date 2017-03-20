@@ -24,7 +24,7 @@ tf::TransformListener* listener;
 ros::Time start_time;
 ultimate_seniorcar::SeniorcarState now_state;
 
-AccidentPredictor elevation_map(0,0,150,150,0.05);
+AccidentPredictor elevation_map(0,0,200,200,0.025);
 
 void PointCloudCallback(const sensor_msgs::PointCloud::ConstPtr& msg);
 void SeniorcarStateCallback(const ultimate_seniorcar::SeniorcarState& msg);

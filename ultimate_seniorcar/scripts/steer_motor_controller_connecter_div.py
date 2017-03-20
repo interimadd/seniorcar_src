@@ -6,6 +6,7 @@ import time
 import serial
 import sys
 from std_msgs.msg import Int8
+from std_msgs.msg import Bool
 from std_msgs.msg import String
 from ultimate_seniorcar.msg import SeniorcarState
 
@@ -18,6 +19,8 @@ GERA_CONSTANT = 3000.0 * 160.0 * 1.561 / 360.0
 
 MAX_STEER_ANGLE = 40
 
+enable_motor = False
+
 
 def callback(data):
 	global target_steer_angle
@@ -27,9 +30,13 @@ def state_callback(data):
 	global state_steer_angle
 	state_steer_angle = data.steer_angle
 
+def enable_motor_callback(data):
+	global enable_motor
+	enable_motor = data.data
+
 def connect_with_arduino():
 	global send_str
-	port = rospy.get_param('steer_motor_port',"/dev/ttyACM0")
+	port = rospy.get_param('steer_motor_port',"/dev/ttyUSB0")
 	pub = rospy.Publisher('motor_controller_input', String, queue_size=10)
 	pub_str = String()
 	print port
@@ -55,13 +62,33 @@ def connect_with_arduino():
 
 	print "Did You Turn On a Motor Switch??"
 
-	while  not rospy.is_shutdown():
+	wait_count = 0
+	while  not wait_count > 200:
+		ser.write("EN\n")
 		ser.write("NP\n")
 		while ser.inWaiting() > 0:
 			if ser.read() == "p":
+				ser.write("EN\n")
 				send_devision_to_steer_motor(ser)				
 				pub_str.data = send_str[:-1]
 				pub.publish(pub_str)
+		rate.sleep()
+		wait_count = wait_count + 1
+
+
+	print "Control Start"
+
+	while  not rospy.is_shutdown():
+		if enable_motor == True:
+			ser.write("NP\n")
+			while ser.inWaiting() > 0:
+				if ser.read() == "p":
+					ser.write("EN\n")
+					send_devision_to_steer_motor(ser)				
+					pub_str.data = send_str[:-1]
+					pub.publish(pub_str)
+		else:
+			ser.write("DI\n")
 
 		rate.sleep()
 
@@ -92,4 +119,5 @@ if __name__ == '__main__':
 	time.sleep(1)
 	rospy.Subscriber("seniorcar_command", SeniorcarState, callback)
 	rospy.Subscriber("seniorcar_state", SeniorcarState, state_callback)
+	rospy.Subscriber("enable_motor", Bool, enable_motor_callback)
 	connect_with_arduino()

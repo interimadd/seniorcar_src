@@ -7,10 +7,18 @@
 
 	<node pkg="urg_process" type="laser_point_to_elevation_map_ver2" name="laser_point_to_elevation_map" output="screen"/>
 
-	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" output="screen"/>
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point" output="screen">
+		<param name="tilt_laser_topic" value="scan_rocker"/>
+	</node>
+
+	<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point2" output="screen">
+		<param name="tilt_laser_topic" value="scan_tilt"/>
+		<param name="height_compensation_value" value="-0.03" />
+	</node>
 	<!--<node pkg="urg_process" type="pointcloud2_to_pointcloud" name="pointcloud2_to_pointcloud" output="screen" />-->
 
-	<node pkg="seniorcar_test" type="generate_seniorcar_comannd_to_avoid_predicted_accident.py" name="generate_seniorcar_comannd_to_avoid_predicted_accident" />
+	<node pkg="seniorcar_test" type="avoid_predicted_accident_with_users_operation.py" name="avoid_predicted_accident_with_users_operation" output="screen"/>
+	<node pkg="seniorcar_test" type="seniorcar_path_marker_pub" name="seniorcar_path_marker_pub" output="screen"/>
 	
 	<node pkg="rviz" type="rviz" name="rviz_predict" args="-d /home/ishikawa/catkin_ws/src/ultimate_seniorcar/launch_xml/elevation_map_visualize.rviz"/>
 

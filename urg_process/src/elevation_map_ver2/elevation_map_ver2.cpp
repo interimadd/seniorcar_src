@@ -31,7 +31,7 @@ ElevationMap::ElevationMap(float pos_x,float pos_y,int map_size_x,int map_size_y
 }
 
 void ElevationMap::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
-	
+
 	int num_x,num_y;
 	int DATA_NUM = laser_point_data.points.size();
 
@@ -61,6 +61,10 @@ void ElevationMap::RecordSensorData(sensor_msgs::PointCloud laser_point_data){
 void ElevationMap::TranslateRealCordinateToIndex(int *return_index,float pose[2]){
 	return_index[0] = int( float(MAP_SIZE_X) + ( pose[0] - center_x ) / HORIZONTAL_RESOLUTION );
 	return_index[1] = int( float(MAP_SIZE_Y) + ( pose[1] - center_y ) / HORIZONTAL_RESOLUTION );
+
+	// 範囲外に出ないようにClamp処理
+	return_index[0] = min(max( 10 , return_index[0] ), MAP_SIZE_X*2 - 10);
+	return_index[1] = min(max( 10 , return_index[1] ), MAP_SIZE_Y*2 - 10);
 }
 
 
@@ -85,6 +89,10 @@ geometry_msgs::Point32 ElevationMap::TranslateIndexToRealCordinate(int x_index,i
 	return point;
 }
 
+
+void ElevationMap::MoveHeightMapZ(float pos_z){
+	center_z = pos_z;
+}
 
 void ElevationMap::MoveHeightMapCenter(float pos_x,float pos_y){
 

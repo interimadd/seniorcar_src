@@ -16,10 +16,10 @@ using namespace std;
 /*
 	 設定パラメータ値
 */
-const float HORIZONTAL_RESOLUTION = 0.05;
+const float HORIZONTAL_RESOLUTION = 0.1;
 const float VERTICAL_RESOLUTION   = 0.01;
 
-const int MAP_SIZE_X_Y = 70; // centerから何マス広がっているか
+const int MAP_SIZE_X_Y = 100; // centerから何マス広がっているか
 const int MAP_SIZE_Z   = 100;
 
 
@@ -27,11 +27,13 @@ const float P_R_Z = 0.09;		// 反射したという情報が返ってきた時�
 const float P_R_notZ = 0.0025;		// 通過したという情報が返ってきた時にそのグリッドが路面である確率
 const float P_R_DEFAULT = 0.05;	// 何も情報が得られていないときにそのグリッドが路面である確率
 
+
 //(0.2,0.01,0.1)
 //(0.055,0.005,0.05)
 //(0.0075,0.00015,0.001)
 //(0.0065,0.00005,0.001)
 //(0.0055,0.00000001,0.001)
+//(0.09,0.0023,0.05)
 
 /*
 	文字定義

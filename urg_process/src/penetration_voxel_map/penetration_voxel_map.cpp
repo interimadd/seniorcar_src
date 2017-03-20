@@ -146,6 +146,11 @@ inline void PenetrationVoxelMap::TranslateRealCordinateToIndex(int *return_index
 	return_index[0] = int( float(MAP_SIZE_X_Y) + ( position_x - center_x ) / HORIZONTAL_RESOLUTION );
 	return_index[1] = int( float(MAP_SIZE_X_Y) + ( position_y - center_y ) / HORIZONTAL_RESOLUTION );
 	return_index[2] = int( float(MAP_SIZE_Z  ) + ( position_z - center_z ) / VERTICAL_RESOLUTION );
+
+	// 範囲外に出ないようにClamp処理
+	return_index[0] = min(max( 3 , return_index[0] ), MAP_SIZE_X_Y*2 - 3);
+	return_index[1] = min(max( 3 , return_index[1] ), MAP_SIZE_X_Y*2 - 3);
+	return_index[2] = min(max( 3 , return_index[2] ), MAP_SIZE_Z*2 - 3);
 }
 
 

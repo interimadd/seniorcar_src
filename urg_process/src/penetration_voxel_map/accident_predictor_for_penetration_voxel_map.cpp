@@ -26,7 +26,7 @@ AccidentPredictor::AccidentPredictor(float pos_x,float pos_y,float pos_z) : Pene
 			tire_calculation_point[tire_calc_index][0] = ( (SENIORCAR_WHEEL_RADIUS - TIRE_CALC_MARGINE) / TIRE_X_SPLIT_NUM ) * ( i - TIRE_X_SPLIT_NUM );
 			tire_calculation_point[tire_calc_index][1] = ( SENIORCAR_WHEEL_THICKNESS / ( TIRE_Y_SPLIT_NUM * 2 ) ) * ( j - TIRE_Y_SPLIT_NUM );
 			tire_calculation_point[tire_calc_index][2] = -sqrt( pow(SENIORCAR_WHEEL_RADIUS,2) - pow(tire_calculation_point[tire_calc_index][0],2));
-			cout << "tire_index:" << tire_calc_index << " x:" << tire_calculation_point[tire_calc_index][0] << " y:" << tire_calculation_point[tire_calc_index][1] << " z:" << tire_calculation_point[tire_calc_index][2] << endl;
+			//cout << "tire_index:" << tire_calc_index << " x:" << tire_calculation_point[tire_calc_index][0] << " y:" << tire_calculation_point[tire_calc_index][1] << " z:" << tire_calculation_point[tire_calc_index][2] << endl;
 		}
 	}
 
@@ -111,6 +111,7 @@ void AccidentPredictor::predictAccident(float pos_x,float pos_y,float pos_z,floa
 				}
 			}
 			calculated_state_array[index].accident_rate = float(accident_count) / CALC_LOOP_NUM ;
+			//printCalculatedState(calculated_state_array[index]);
 		}
 	}
 
@@ -445,6 +446,7 @@ void AccidentPredictor::printCalculatedState(CalculatedVehicleState state){
 	<< "bl_wheel:(," << state.tire_pos[2][0] <<  "," <<  state.tire_pos[2][1] <<  "," <<  state.tire_pos[2][2] << ",)  " 
 	<< "br_wheel:(," << state.tire_pos[3][0] <<  "," <<  state.tire_pos[3][1] <<  "," <<  state.tire_pos[3][2] << ",)  " 
 	<< "roll_angle:," << state.calculated_roll_angle << ","
+	<< "pitch_angle:," << state.calculated_pitch_angle << ","
 	<< "fall:," << state.is_fall << "  collision:," << state.is_collision << "  rollover:," << state.is_rollover << endl;  
 }
 

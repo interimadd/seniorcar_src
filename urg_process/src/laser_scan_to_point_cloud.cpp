@@ -5,8 +5,10 @@
 using namespace std;
 
 double MIN_DISTANCE = 0.5;  // Scanデータで近すぎるものを除去するときの距離の閾値
-double MAX_DISTANCE = 3.5;  // Scanデータで遠すぎるものを除去するときの距離の閾値
+double MAX_DISTANCE = 10.0;  // Scanデータで遠すぎるものを除去するときの距離の閾値
 double NOT_DETECT   = 1000; // 短すぎるデータを置換して仮想的に除去する。置き換える距離
+
+double height_compensation_value = 0.0; // 高さをプラスいくつするか
 
 class ScanToPoint{
   private:
@@ -43,6 +45,12 @@ void ScanToPoint::scanCallback (const sensor_msgs::LaserScan::ConstPtr& scan_in)
   sensor_msgs::PointCloud cloud;
   projector_.transformLaserScanToPointCloud("/odom",scan_filtered,cloud,listener_);
 
+  if( height_compensation_value != 0 ){
+    for(int i=0;i < data_num; i++){
+      cloud.points[i].z += height_compensation_value;
+    }
+  }
+
   pubTrackMarkers.publish(cloud);
 
   // Do something with cloud.
@@ -54,8 +62,12 @@ ScanToPoint::ScanToPoint(int argc,char** argv){
 
 void ScanToPoint::start(){
   string s;
-  if( !n.getParam("tilt_laser_topic",s) ){
-    s = "scan";
+  //if( !n.getParam("tilt_laser_topic",s) ){
+  if(!ros::param::get("~tilt_laser_topic", s)){
+    s = "scan_tilt";
+  }
+  if(!ros::param::get("~height_compensation_value", height_compensation_value)){
+    height_compensation_value = 0;
   }
   cout << s << endl;
   ros::Duration(1.0).sleep();

@@ -8,10 +8,14 @@ const float SENIORCAR_WHEEL_BASE_LENGTH = 0.9;
 const float calculate_distance_step = 0.1;
 const float CALC_NUM = 30;
 
-ultimate_seniorcar::SeniorcarState now_command;
+ultimate_seniorcar::SeniorcarState now_command,now_state;
 
 void SeniorcarCommandCallback(const ultimate_seniorcar::SeniorcarState& msg){
   now_command = msg;
+}
+
+void SeniorcarStateCallback(const ultimate_seniorcar::SeniorcarState& msg){
+  now_state = msg;
 }
 
 // 経路のマーカーを操舵角度から生成
@@ -19,7 +23,7 @@ void generatePathMarker(visualization_msgs::Marker *triangles,float angle,std_ms
 
   float pos_x = 0.0;
   float pos_y = 0.0;
-  float pos_z = 0.0;
+  float pos_z = 0.3;
   float yaw   = 0.0;
 
   triangles->header.frame_id = "/base_link";
@@ -59,7 +63,8 @@ int main( int argc, char** argv )
   ros::NodeHandle n;
   ros::Rate r(10);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("seniorcar_path_marker", 1);
-  ros::Subscriber state_sub = n.subscribe("seniorcar_command", 1000, SeniorcarCommandCallback);
+  ros::Subscriber command_sub = n.subscribe("seniorcar_command", 1000, SeniorcarCommandCallback);
+  ros::Subscriber state_sub   = n.subscribe("seniorcar_state", 1000, SeniorcarStateCallback);
 
   std_msgs::ColorRGBA blue;
   blue.r = 0.0f; blue.g = 0.0f; blue.b = 1.0f; blue.a = 1.0f;
@@ -69,8 +74,8 @@ int main( int argc, char** argv )
   while (ros::ok())
   {
     visualization_msgs::Marker marker;
-    generatePathMarker(&marker,0,blue);
-    generatePathMarker(&marker,now_command.steer_angle*3.14/180.0,yellow);
+    generatePathMarker(&marker,now_state.steer_angle*3.14/180.0,yellow);
+    generatePathMarker(&marker,now_command.steer_angle*3.14/180.0,blue);
     // Publish the marker
     marker_pub.publish(marker);
     ros::spinOnce();

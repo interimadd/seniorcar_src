@@ -1,0 +1,40 @@
+<launch>
+
+<arg name="rocker_encorder_port" value="/dev/ttyACM4"/>
+<arg name="rocker_LRF_port" value="/dev/ttyACM5"/>
+
+<node pkg="tf" type="static_transform_publisher" name="laser_base_to_rocker_laser" args="0.0 0.0 0.08 0.0 0.0 0.0 /LRF_rocker_base /laser_rocker 40" />
+
+<param name="rocker_encorder_port" value="$(arg rocker_encorder_port)"/>
+<node pkg ="ultimate_seniorcar" type="LRF_rocker_connecter.py" name="LRF_rocker_connecter"/>
+
+<!--
+<node pkg="urg_process" type="laser_scan_to_point_cloud" name="laser_to_point_rocker" output="screen">
+	<param name="tilt_laser_topic" value="scan_rocker"/>
+</node>
+-->
+
+<!--
+<node pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node_rocker">
+	<param name="max_ang" value="1.2"/>
+  	<param name="min_ang" value="-1.2"/>
+  	<param name="port" value="$(arg rocker_LRF_port)"/>
+  	<param name="skip" value="0"/>
+	<param name="cluster" value="1"/>
+	<param name="intensity" value="false"/>
+  	<param name="frame_id" value="/laser_rocker"/>
+  	<remap from="scan" to="scan_rocker"/>
+</node>
+-->
+
+<node pkg="urg_node" type="urg_node" name="urg_node_back">
+	<param name="angle_max" value="1.2"/>
+  	<param name="angle_min" value="-1.2"/>
+  	<param name="serial_port" value="$(arg rocker_LRF_port)"/>
+  	<param name="frame_id" value="/laser_rocker"/>
+  	<param name="publish_intensity" value="false"/>
+  	<remap from="scan" to="scan_rocker"/>
+</node>
+
+
+</launch>

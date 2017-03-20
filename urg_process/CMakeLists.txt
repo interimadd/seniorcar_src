@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   laser_geometry
   tf
+  ultimate_seniorcar
 )
 find_package( PCL REQUIRED )
 include_directories(  ${catkin_INCLUDE_DIRS}  ${PCL_INCLUDE_DIRS} )
@@ -196,36 +197,8 @@ include_directories(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(laser_point_to_height_map 
-  src/height_map/height_map.cpp
-  src/height_map/laser_point_to_height_map.cpp
-  src/height_map/risk_calculater.cpp
-)
-target_link_libraries(laser_point_to_height_map ${catkin_LIBRARIES})
-
 add_executable(laser_scan_to_point_cloud src/laser_scan_to_point_cloud.cpp)
 target_link_libraries(laser_scan_to_point_cloud ${catkin_LIBRARIES})
-
-add_executable(laser_point_to_riskcalculater 
-  src/height_map/height_map.cpp
-  src/height_map/risk_calculater.cpp
-  src/height_map/laser_point_to_riskcalculater.cpp
-)
-target_link_libraries(laser_point_to_riskcalculater ${catkin_LIBRARIES})
-
-add_executable(laser_point_to_elevation_map 
-  src/elevation_map/elevation_map.cpp
-  src/risk_calculater_for_elevation_map/risk_calculater_for_elevation_map.cpp
-  src/laser_point_to_elevation_map.cpp
-)
-target_link_libraries(laser_point_to_elevation_map ${catkin_LIBRARIES})
-
-add_executable(laser_point_to_elevation_map_for_simulator 
-  src/elevation_map/elevation_map.cpp
-  src/risk_calculater_for_elevation_map/risk_calculater_for_elevation_map.cpp
-  src/laser_point_to_elevation_map_for_simulator.cpp
-)
-target_link_libraries(laser_point_to_elevation_map_for_simulator ${catkin_LIBRARIES})
 
 add_executable(laser_point_to_elevation_map_ver2 
   src/elevation_map_ver2/elevation_map_ver2.cpp

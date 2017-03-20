@@ -177,7 +177,7 @@ class CANUSB_Connecter:
 
 	def update_vehicle_data(self):
 
-		self.seniorcar_state.accel_opening = self.seniorcar_state_array[0]
+		self.seniorcar_state.accel_opening = numpy.int8(self.seniorcar_state_array[0])
 		self.seniorcar_state.max_velocity = self.seniorcar_state_array[1]
 		self.seniorcar_state.steer_angle = self.seniorcar_state_array[2]
 		self.seniorcar_state.vehicle_velocity = self.seniorcar_state_array[3] / 3.6  #  [km/h]から[m/s]へ変換
@@ -226,7 +226,7 @@ class CANUSB_Connecter:
 
 	def update_can_information_array(self , can_data):
 
-		self.seniorcar_state_array[0] = float(int(can_data[:2] , 16)) / 127.0 # アクセル開度
+		self.seniorcar_state_array[0] = float(int(can_data[:2] , 16)) # アクセル開度
 		self.seniorcar_state_array[1] = float(int(can_data[2:4] , 16)) / 100.0 * 4.0 + 2.0 #  最大速度
 		self.seniorcar_state_array[2] = float(int(can_data[6:8]   + can_data[4:6]  , 16)) / 10.0 - 90.0 # 操舵角度
 		self.seniorcar_state_array[3] = float(int(can_data[10:12] + can_data[8:10] , 16)) / 100.0 # 車両速度

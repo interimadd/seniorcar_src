@@ -4,7 +4,7 @@
     <arg name="canusb_port"        value="/dev/ttyUSB1"/>
     
 	<!-- 操舵角度のオフセット。まっすぐ走れる角度 -->
-    <arg name="canusb_steer_angle_offset" value="-4.1"/>
+    <arg name="canusb_steer_angle_offset" value="-2.2"/>
 
 	<!-- 各種センサへの接続 -->
     <param name="canusb_port" value="$(arg canusb_port)"/>

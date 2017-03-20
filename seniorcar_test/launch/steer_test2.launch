@@ -5,9 +5,9 @@
 
 	<!-- 各種センサへの接続 -->
 	<param name="canusb_port" value="$(arg canusb_port)"/>
-    <node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter"/>
+    	<node pkg="ultimate_seniorcar" type="canusb_connecter.py" name="can_usbconnecter"/>
     
-    <param name="steer_motor_port" value="$(arg steer_motor_port)" />
+    	<param name="steer_motor_port" value="$(arg steer_motor_port)" />
 	<node pkg="ultimate_seniorcar" type="steer_motor_serial.py" name="steer_motor" output="screen"/>
 
 	<node pkg="keyboard" type="keyboard" name="keyboard"/>
